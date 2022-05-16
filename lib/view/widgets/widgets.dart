@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/core/app/note.dart';
+import 'package:smallnotes/core/app/note.dart';
 
 abstract class NoteStatelessWidget extends StatelessWidget {
   NoteStatelessWidget({Key? key}) : super(key: key);

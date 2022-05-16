@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/core/provider/notes.dart';
-import 'package:littleNotes/view/constant/color_constant.dart';
-import 'package:littleNotes/view/constant/size_constant.dart';
-import 'package:littleNotes/view/general/profile/components/favorite_num.dart';
-import 'package:littleNotes/view/general/profile/components/note_num.dart';
-import 'package:littleNotes/view/widgets/fade_animations.dart';
-import 'package:littleNotes/view/widgets/utils.dart';
-import 'package:littleNotes/view/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:smallnotes/core/provider/notes.dart';
+import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/constant/size_constant.dart';
+import 'package:smallnotes/view/general/profile/components/favorite_num.dart';
+import 'package:smallnotes/view/general/profile/components/note_num.dart';
+import 'package:smallnotes/view/widgets/fade_animations.dart';
+import 'package:smallnotes/view/widgets/utils.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 
 class Profile extends NoteStatefulWidget {
   Profile({Key? key}) : super(key: key);
@@ -134,17 +134,9 @@ class _ProfileState extends NoteState<Profile> {
     final selectedTile = selectedTileIndex == index;
     final titleStyle = TextStyle(color: AppColors.black, fontSize: 18);
     final subtitleStyle = TextStyle(color: AppColors.brown, fontSize: 16);
-    String textNote = '';
-    String titleNote = '';
 
-    if (helper.textNote.length > 15) {
-      textNote = '${helper.textNote.substring(0, 15)}...';
-    }
-    if (helper.titleNote.length > 15) {
-      titleNote = '${helper.titleNote.substring(0, 15)}...';
-    } else {
-      textNote = helper.textNote;
-      titleNote = helper.titleNote;
+    if (helper.titleNote.length >= 15) {
+      helper.titleNote = '${helper.titleNote.substring(0, 15)}...';
     }
 
     return InkWell(
@@ -162,29 +154,17 @@ class _ProfileState extends NoteState<Profile> {
             Positioned(
               top: 7,
               left: 7,
-              child: Text(titleNote, style: titleStyle),
+              child: Text(helper.titleNote, style: titleStyle),
             ),
             Positioned(
-              top: 1,
+              top: 7,
               right: 7,
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.favorite_border),
-                color: selectedTile ? AppColors.white : AppColors.red,
-                splashColor: AppColors.transparent,
-                focusColor: AppColors.transparent,
-                highlightColor: AppColors.transparent,
-              ),
+              child: Text(helper.dateCreate, style: subtitleStyle, maxLines: 1),
             ),
             Positioned(
               bottom: 7,
               left: 7,
-              child: Text(textNote, style: subtitleStyle, maxLines: 1),
-            ),
-            Positioned(
-              bottom: 7,
-              right: 7,
-              child: Text(helper.dateCreate, style: subtitleStyle, maxLines: 1),
+              child: Text(helper.textNote, style: subtitleStyle, maxLines: 1),
             ),
           ],
         ),

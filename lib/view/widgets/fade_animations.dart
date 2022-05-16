@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/view/widgets/widgets.dart';
 import 'package:simple_animations/simple_animations.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 
 enum AnimationType { opacity, translateX }
 

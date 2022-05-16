@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/constant/color_constant.dart';
 
 class ViewUtils {
   static nonBorderDecoration({String? hint}) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/view/widgets/widgets.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 
 class FavoritePG extends NoteStatefulWidget {
   FavoritePG({Key? key}) : super(key: key);

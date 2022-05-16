@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:littleNotes/core/app/intl.dart';
-import 'package:littleNotes/core/provider/notes.dart';
-import 'package:littleNotes/view/constant/color_constant.dart';
-import 'package:littleNotes/view/general_home.dart';
-import 'package:littleNotes/view/widgets/widgets.dart';
+import 'package:smallnotes/core/app/intl.dart';
+import 'package:smallnotes/core/provider/notes.dart';
+import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/general_home.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends NoteStatefulWidget {

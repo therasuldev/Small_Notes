@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/core/utils/logger.dart';
+import 'package:smallnotes/core/utils/logger.dart';
 
 import 'intl.dart';
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:littleNotes/core/provider/notes.dart';
-import 'package:littleNotes/view/constant/color_constant.dart';
-import 'package:littleNotes/view/general/home/components/text_form_widget.dart';
-import 'package:littleNotes/view/general/home/components/title_form_widget.dart';
-import 'package:littleNotes/view/widgets/utils.dart';
-import 'package:littleNotes/view/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:smallnotes/core/provider/notes.dart';
+import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/general/home/components/text_form_widget.dart';
+import 'package:smallnotes/view/general/home/components/title_form_widget.dart';
+import 'package:smallnotes/view/widgets/utils.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
+
 class Home extends NoteStatefulWidget {
   Home({Key? key}) : super(key: key);
 
@@ -50,9 +51,9 @@ class _HomeState extends NoteState<Home> {
   }
 
   void check() async {
-    final result = (titleNoteController.text.trim().length >= 4 &&
-        titleNoteController.text.trim().length <= 35 &&
-        textNoteController.text.trim().length >= 4);
+    final result = (titleNoteController.text.length >= 4 &&
+        titleNoteController.text.length <= 25 &&
+        textNoteController.text.length >= 4);
 
     if (result) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -90,7 +91,7 @@ class _HomeState extends NoteState<Home> {
                 ),
                 TextForm(
                   textNoteController: textNoteController,
-                  noteLength: 1000 - _textNote!.trim().length,
+                  noteLength: 1000 - _textNote!.length,
                   onChanged: (text) => setState(() => _textNote = text),
                 )
               ],

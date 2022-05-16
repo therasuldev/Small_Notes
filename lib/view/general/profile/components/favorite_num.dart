@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/view/constant/color_constant.dart';
-import 'package:littleNotes/view/widgets/utils.dart';
-import 'package:littleNotes/view/widgets/widgets.dart';
+import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/widgets/utils.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 
 class FavoriteNum extends NoteStatelessWidget {
   FavoriteNum({required this.favoriteNum, Key? key}) : super(key: key);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:littleNotes/core/database/notes_database.dart';
+import 'package:smallnotes/core/database/notes_database.dart';
 import 'package:uuid/uuid.dart';
 
 class NoteModel {
