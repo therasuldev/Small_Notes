@@ -24,6 +24,7 @@ class _ProfileState extends NoteState<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(134, 232, 200, 193),
       body: FutureBuilder(
         future: _future(),
         builder: (context, snapshot) {
@@ -40,7 +41,7 @@ class _ProfileState extends NoteState<Profile> {
               Consumer<NoteProvider>(
                 child: Column(
                   children: [
-                    _numFavoriteAndNoteLen(productProvider: productProvider),
+                    _statisticsFavLen(productProvider: productProvider),
                     const SizedBox(height: 250),
                     Text(note.fmt(context, 'data.isEmpty')),
                   ],
@@ -50,7 +51,7 @@ class _ProfileState extends NoteState<Profile> {
 
                   return Column(
                     children: [
-                      _numFavoriteAndNoteLen(productProvider: productProvider),
+                      _statisticsFavLen(productProvider: productProvider),
                       const Padding(padding: EdgeInsets.only(bottom: 15)),
                       _noteList(productProvider: productProvider),
                     ],
@@ -64,7 +65,7 @@ class _ProfileState extends NoteState<Profile> {
     );
   }
 
-  Row _numFavoriteAndNoteLen({required NoteProvider productProvider}) {
+  Row _statisticsFavLen({required NoteProvider productProvider}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -132,8 +133,10 @@ class _ProfileState extends NoteState<Profile> {
 
   Widget _notesTile(NoteModel helper, int index) {
     final selectedTile = selectedTileIndex == index;
-    final titleStyle = TextStyle(color: AppColors.black, fontSize: 18);
-    final subtitleStyle = TextStyle(color: AppColors.brown, fontSize: 16);
+    final titleStyle = TextStyle(color: Color(helper.textColor), fontSize: 18);
+    final subtitleStyle =
+        TextStyle(color: Color(helper.textColor), fontSize: 16);
+    final dateStyle = TextStyle(color: Color(helper.textColor), fontSize: 16);
 
     if (helper.titleNote.length >= 15) {
       helper.titleNote = '${helper.titleNote.substring(0, 15)}...';
@@ -141,12 +144,17 @@ class _ProfileState extends NoteState<Profile> {
 
     return InkWell(
       onTap: () => setState(() => selectedTileIndex = index),
+      canRequestFocus: false,
+      enableFeedback: false,
+      excludeFromSemantics: false,
+      autofocus: false,
       child: Container(
         height: 70,
         width: size(context).width,
         margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
         decoration: BoxDecoration(
-          color: selectedTile ? AppColors.redLight : AppColors.orangeLight,
+          color:
+              selectedTile ? AppColors.blueGrey : Color(helper.backgroundColor),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Stack(
@@ -159,7 +167,7 @@ class _ProfileState extends NoteState<Profile> {
             Positioned(
               top: 7,
               right: 7,
-              child: Text(helper.dateCreate, style: subtitleStyle, maxLines: 1),
+              child: Text(helper.dateCreate, style: dateStyle, maxLines: 1),
             ),
             Positioned(
               bottom: 7,

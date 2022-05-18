@@ -7,12 +7,16 @@ class NoteModel {
   String titleNote;
   String textNote;
   String dateCreate;
+  int backgroundColor;
+  int textColor;
 
   NoteModel({
     required this.id,
+    required this.backgroundColor,
     required this.titleNote,
     required this.textNote,
     required this.dateCreate,
+    required this.textColor,
   });
 }
 
@@ -23,6 +27,8 @@ class NoteProvider extends ChangeNotifier {
 
   //database
   Future insertDatabase(
+    int backgroundColor,
+    int textColor,
     String titleNote,
     String textNote,
     String dateCreate,
@@ -31,6 +37,8 @@ class NoteProvider extends ChangeNotifier {
       id: const Uuid().v1(),
       titleNote: titleNote,
       textNote: textNote,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
       dateCreate: dateCreate,
     );
     _item.add(noteItem);
@@ -42,6 +50,8 @@ class NoteProvider extends ChangeNotifier {
         'titleNote': noteItem.titleNote,
         'textNote': noteItem.textNote,
         'dateCreate': noteItem.dateCreate,
+        'backgroundColor': noteItem.backgroundColor,
+        'textColor':textColor,
       },
     );
 
@@ -57,6 +67,8 @@ class NoteProvider extends ChangeNotifier {
             titleNote: item['titleNote'],
             textNote: item['textNote'],
             dateCreate: item['dateCreate'],
+            backgroundColor: item['backgroundColor'],
+            textColor: item['textColor'],
           ),
         )
         .toList();

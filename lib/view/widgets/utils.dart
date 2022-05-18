@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:smallnotes/view/constant/color_constant.dart';
 
 class ViewUtils {
@@ -69,6 +70,81 @@ class ViewUtils {
     );
   }
 
+  static bottomSheet({
+    required BuildContext context,
+    required String selectColor,
+    required String changeColor,
+    required Color pickerColor,
+    required void Function(Color) changePickerColor,
+  }) {
+    return showBottomSheet(
+      context: context,
+      enableDrag: true,
+      shape: ViewUtils.shapeBorder(),
+      backgroundColor: AppColors.brown200,
+      builder: (context) {
+        const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
+
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 15),
+              Text(selectColor, style: style),
+              const SizedBox(height: 10),
+              ColorPicker(
+                  pickerColor: pickerColor, onColorChanged: changePickerColor),
+              const SizedBox(height: 10)
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static bottomSHEET({
+    required BuildContext context,
+    required void Function(int) changeTextColor,
+  }) {
+    return showBottomSheet(
+      enableDrag: true,
+      shape: ViewUtils.shapeBorder(),
+      backgroundColor: Colors.blueGrey,
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 80,
+          child: Center(
+            child: ListView.builder(
+              itemBuilder: (contex, index) {
+                int select = 0;
+                select = index;
+                return InkWell(
+                  onTap: () => changeTextColor(select),
+                  child: Container(
+                    width: 80,
+                    margin: const EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    decoration: ViewUtils.formDecoration(),
+                    child: Container(
+                      height: 35,
+                      width: 35,
+                      color: select == 0 ? AppColors.black : AppColors.grey,
+                    ),
+                  ),
+                );
+              },
+              shrinkWrap: true,
+              itemCount: 2,
+              scrollDirection: Axis.horizontal,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static formDecoration() {
     return BoxDecoration(
       color: AppColors.brownLight,
@@ -93,6 +169,15 @@ class ViewUtils {
       border: Border.all(color: color, width: 2),
       borderRadius: BorderRadius.circular(10),
     );
+  }
+
+  static shapeBorder() {
+    return const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)));
+  }
+
+  static buttonStyle() {
+    return ElevatedButton.styleFrom(primary: AppColors.blueGrey, elevation: 20);
   }
 
   static toolbarOptions() {

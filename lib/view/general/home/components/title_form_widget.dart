@@ -7,13 +7,11 @@ class TitleForm extends NoteStatelessWidget {
   TitleForm({
     required this.titleNoteController,
     required this.focusNode,
-    //required this.onChanged,
     Key? key,
   }) : super(key: key);
 
   final TextEditingController titleNoteController;
   final FocusNode focusNode;
-  // void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {

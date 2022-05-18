@@ -2,16 +2,18 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBHelper {
-  static const note = "dbnotes";
+  static const note = "NotesOfficial";
 
   static Future<Database> database() async {
     final dbPath = await getDatabasesPath();
     return await openDatabase(
-      join(dbPath, "db_helper"),
+      join(dbPath, "NotesOfficial"),
       onCreate: (db, version) {
         db.execute("CREATE TABLE IF NOT EXISTS $note(id TEXT PRIMARY KEY ,"
             " titleNote TEXT,"
             " dateCreate TEXT,"
+            " textColor INTEGER,"
+            " backgroundColor INTEGER,"
             " textNote TEXT)");
       },
       version: 1,

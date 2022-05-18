@@ -19,6 +19,9 @@ class _HomeState extends NoteState<Home> {
   final titleNoteController = TextEditingController();
   final textNoteController = TextEditingController();
   final focusNode = FocusNode();
+  Color pickerColor = AppColors.brownLight;
+  Color backgroundColor = AppColors.white;
+  Color textColor = AppColors.white;
   String? _textNote = '';
 
   @override
@@ -43,11 +46,45 @@ class _HomeState extends NoteState<Home> {
     }
   }
 
-  void close() {
-    FocusScope.of(context).requestFocus(focusNode);
+  void changePickerColor(Color color) {
+    setState(() {
+      pickerColor = color;
+      backgroundColor = pickerColor;
+    });
+  }
 
+  void changeTextColor(int selectTextColorIndex) {
+    setState(() {
+      textColor = selectTextColorIndex == 0 ? Colors.black : Colors.white;
+    });
+  }
+
+  selectColor() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    final selectColor = note.fmt(context, 'select.background.color');
+    final changeColor = note.fmt(context, 'change.color');
+    return ViewUtils.bottomSheet(
+      context: context,
+      selectColor: selectColor,
+      changeColor: changeColor,
+      pickerColor: pickerColor,
+      changePickerColor: changePickerColor,
+    );
+  }
+
+  selectTextColor() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    return ViewUtils.bottomSHEET(
+      context: context,
+      changeTextColor: changeTextColor,
+    );
+  }
+
+  void close() {
+    FocusScope.of(context).unfocus();
     titleNoteController.clear();
     textNoteController.clear();
+    setState(() => _textNote = '');
   }
 
   void check() async {
@@ -60,15 +97,17 @@ class _HomeState extends NoteState<Home> {
       final productProvider = Provider.of<NoteProvider>(context, listen: false);
 
       await productProvider.insertDatabase(
+        backgroundColor.value,
+        textColor.value,
         titleNoteController.text.trim(),
         textNoteController.text.trim(),
         DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
       );
       titleNoteController.clear();
       textNoteController.clear();
-
       setState(() => _textNote = '');
     } else {
+      FocusScope.of(context).requestFocus(FocusNode());
       final msg = note.fmt(context, 'snack.error');
       ViewUtils.showSnack(context, msg: msg, color: AppColors.red);
     }
@@ -118,6 +157,15 @@ class _HomeState extends NoteState<Home> {
   AppBar _endViewAppBar() {
     return AppBar(
       actions: [
+        IconButton(
+            onPressed: selectColor,
+            icon: Icon(Icons.color_lens, color: backgroundColor)),
+        IconButton(
+            onPressed: selectTextColor,
+            icon: Icon(
+              Icons.colorize_sharp,
+              color: textColor,
+            )),
         IconButton(onPressed: close, icon: const Icon(Icons.close)),
         IconButton(onPressed: check, icon: const Icon(Icons.check)),
       ],
