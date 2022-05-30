@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:smallnotes/core/provider/notes.dart';
-import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/core/provider/notes_cubit.dart';
+import 'package:smallnotes/view/constant/app_color.dart';
 import 'package:smallnotes/view/general/home/components/text_form_widget.dart';
 import 'package:smallnotes/view/general/home/components/title_form_widget.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
+import 'package:uuid/uuid.dart';
 
 class Home extends NoteStatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class _HomeState extends NoteState<Home> {
   final focusNode = FocusNode();
   Color pickerColor = AppColors.brownLight;
   Color backgroundColor = AppColors.white;
-  Color textColor = AppColors.white;
+  Color textColor = AppColors.black;
   String? _textNote = '';
 
   @override
@@ -35,7 +36,7 @@ class _HomeState extends NoteState<Home> {
   @override
   void initState() {
     super.initState();
-    Provider.of<NoteProvider>(context, listen: false);
+    BlocProvider.of<NotesCubit>(context);
   }
 
   void unFocus() {
@@ -46,18 +47,14 @@ class _HomeState extends NoteState<Home> {
     }
   }
 
-  void changePickerColor(Color color) {
-    setState(() {
-      pickerColor = color;
-      backgroundColor = pickerColor;
-    });
-  }
+  void changePickerColor(Color color) => setState(() {
+        pickerColor = color;
+        backgroundColor = pickerColor;
+      });
 
-  void changeTextColor(int selectTextColorIndex) {
-    setState(() {
-      textColor = selectTextColorIndex == 0 ? Colors.black : Colors.white;
-    });
-  }
+  void changeToBlack() => setState(() => textColor = AppColors.black);
+
+  void changeToWhite() => setState(() => textColor = AppColors.white);
 
   selectColor() {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -74,9 +71,10 @@ class _HomeState extends NoteState<Home> {
 
   selectTextColor() {
     FocusScope.of(context).requestFocus(FocusNode());
-    return ViewUtils.bottomSHEET(
+    return ViewUtils.showMENU(
       context: context,
-      changeTextColor: changeTextColor,
+      whiteColor: changeToWhite,
+      blackColor: changeToBlack,
     );
   }
 
@@ -89,26 +87,26 @@ class _HomeState extends NoteState<Home> {
 
   void check() async {
     final result = (titleNoteController.text.length >= 4 &&
-        titleNoteController.text.length <= 25 &&
         textNoteController.text.length >= 4);
 
     if (result) {
       FocusScope.of(context).requestFocus(FocusNode());
-      final productProvider = Provider.of<NoteProvider>(context, listen: false);
+      final productProvider = BlocProvider.of<NotesCubit>(context);
 
       await productProvider.insertDatabase(
-        backgroundColor.value,
-        textColor.value,
-        titleNoteController.text.trim(),
-        textNoteController.text.trim(),
-        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
+        id: const Uuid().v1(),
+        titleNote: titleNoteController.text.trim(),
+        textNote: textNoteController.text.trim(),
+        dateCreate: DateFormat('yyyy.MM.dd').format(DateTime.now()).toString(),
+        backgroundColor: backgroundColor.value,
+        textColor: textColor.value,
       );
       titleNoteController.clear();
       textNoteController.clear();
       setState(() => _textNote = '');
     } else {
       FocusScope.of(context).requestFocus(FocusNode());
-      final msg = note.fmt(context, 'snack.error');
+      final msg = note.fmt(context, 'error.snack');
       ViewUtils.showSnack(context, msg: msg, color: AppColors.red);
     }
   }
@@ -147,7 +145,9 @@ class _HomeState extends NoteState<Home> {
       title: Text(note.fmt(context, 'app.title')),
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/favoritePG');
+          },
           icon: const Icon(Icons.favorite_border),
         )
       ],
