@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/size_constant.dart';
+import 'package:smallnotes/view/constant/app_size.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 
@@ -28,7 +28,6 @@ class TitleForm extends NoteStatelessWidget {
         toolbarOptions: ViewUtils.toolbarOptions(),
         autofocus: true,
         focusNode: focusNode,
-        // onChanged: onChanged,
       ),
     );
   }
