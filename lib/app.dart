@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:smallnotes/core/app/intl.dart';
-import 'package:smallnotes/core/provider/notes.dart';
-import 'package:smallnotes/view/constant/color_constant.dart';
-import 'package:smallnotes/view/general_home.dart';
+import 'package:smallnotes/core/provider/notes_cubit.dart';
+import 'package:smallnotes/view/constant/app_color.dart';
+import 'package:smallnotes/view/constant/app_route.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
-import 'package:provider/provider.dart';
 
 class MyApp extends NoteStatefulWidget {
   MyApp({Key? key}) : super(key: key);
@@ -15,19 +15,22 @@ class MyApp extends NoteStatefulWidget {
 }
 
 class _MyAppState extends NoteState<MyApp> {
+  AppRoute appRoute = AppRoute();
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => NoteProvider()),
+        BlocProvider(create: (context) => NotesCubit(NoteInitial())),
       ],
-      builder: (context, child) => MaterialApp(
+      child: MaterialApp(
         theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: AppColors.brown),
           scaffoldBackgroundColor: AppColors.white,
         ),
         debugShowCheckedModeBanner: false,
-        home: GeneralHome(),
+        initialRoute: appRoute.appRoutes.keys.first,
+        routes: appRoute.appRoutes,
+        title: 'Small Colored Notes',
         localizationsDelegates: [
           note.intl.delegate,
           GlobalMaterialLocalizations.delegate,

@@ -7,13 +7,17 @@
     "bottom_navbar.note.add": "əsas",
     "bottom_navbar.notes": "qeydlər", 
 
-    "snack.error":"Başlığı ən az 4, ən çox 25 simvol girin. Mətni ən az 4 simvol girin.",
+    "error.snack":"Başlığı ən az 4, ən çox 25 simvol girin. Mətni ən az 4 simvol girin.",
+    "error.unknown":"Naməlum xəta baş verdi.",
      
     "data.isEmpty":"Qeyd yoxdur",
+
+    "save.image":"Şəkil galareyada saxlanıldı.",
 
     "dialog.check":"Bəli", 
     "dialog.close":"Xeyr",
     "dialog.title":"Qeydi silmək istəyirsiniz ?",
+    "deleted.favorite":"Favoritlərdən silmək istəyirsiniz?",
 
     "change.color":"Rəng dəyişdir",
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/constant/app_color.dart';
 
 class ViewUtils {
   static nonBorderDecoration({String? hint}) {
@@ -50,7 +50,7 @@ class ViewUtils {
   }) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(title),
+      title: Text(title, maxLines: 2, style: const TextStyle(fontSize: 17)),
       actions: [
         TextButton(
           key: const Key('cancel.button'),
@@ -77,9 +77,9 @@ class ViewUtils {
     required Color pickerColor,
     required void Function(Color) changePickerColor,
   }) {
-    return showBottomSheet(
+    return showModalBottomSheet(
       context: context,
-      enableDrag: true,
+      isScrollControlled: true,
       shape: ViewUtils.shapeBorder(),
       backgroundColor: AppColors.brown200,
       builder: (context) {
@@ -103,45 +103,44 @@ class ViewUtils {
     );
   }
 
-  static bottomSHEET({
+  static showMENU({
     required BuildContext context,
-    required void Function(int) changeTextColor,
-  }) {
-    return showBottomSheet(
-      enableDrag: true,
-      shape: ViewUtils.shapeBorder(),
-      backgroundColor: Colors.blueGrey,
+    required void Function()? whiteColor,
+    required void Function()? blackColor,
+  }) async {
+    return await showMenu(
       context: context,
-      builder: (context) {
-        return SizedBox(
-          height: 80,
-          child: Center(
-            child: ListView.builder(
-              itemBuilder: (contex, index) {
-                int select = 0;
-                select = index;
-                return InkWell(
-                  onTap: () => changeTextColor(select),
-                  child: Container(
-                    width: 80,
-                    margin: const EdgeInsets.all(10),
-                    alignment: Alignment.center,
-                    decoration: ViewUtils.formDecoration(),
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      color: select == 0 ? AppColors.black : AppColors.grey,
-                    ),
-                  ),
-                );
-              },
-              shrinkWrap: true,
-              itemCount: 2,
-              scrollDirection: Axis.horizontal,
-            ),
+      color: AppColors.grey,
+      position: const RelativeRect.fromLTRB(300.0, 100.0, 50.0, 600.0),
+      items: [
+        PopupMenuItem(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              PopupMenuItem(
+                onTap: whiteColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("ağ"),
+                    Icon(Icons.circle, color: AppColors.white),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                onTap: blackColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("qara"),
+                    Icon(Icons.circle, color: AppColors.black),
+                  ],
+                ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 
@@ -153,14 +152,38 @@ class ViewUtils {
     );
   }
 
-  static smallDecoration() {
+  static favoriteCardDecoration(int color) {
     return BoxDecoration(
-      color: AppColors.blueGrey,
-      borderRadius: const BorderRadius.only(
-        bottomRight: Radius.circular(10),
-        topLeft: Radius.circular(10),
+        color: Color(color),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(width: .5));
+  }
+
+  static smallDecoration({Color? color, Radius? radius}) {
+    return BoxDecoration(
+      color: color ?? AppColors.blueGrey,
+      borderRadius: BorderRadius.only(
+        bottomRight: radius ?? const Radius.circular(10),
+        topLeft: radius ?? const Radius.circular(10),
+        topRight: radius ?? Radius.zero,
+        bottomLeft: radius ?? Radius.zero,
       ),
     );
+  }
+
+  static catalogForItemCard() {
+    return const BoxDecoration(boxShadow: [
+      BoxShadow(
+        color: Color.fromARGB(255, 202, 202, 202),
+        spreadRadius: .5,
+        blurRadius: 5,
+        offset: Offset(0, 5),
+      ),
+      BoxShadow(
+        color: Colors.white,
+        offset: Offset(-5, 0),
+      ),
+    ], borderRadius: BorderRadius.only(bottomRight: Radius.circular(15)));
   }
 
   static decorationForProfAppBar(Color color) {

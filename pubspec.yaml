@@ -46,6 +46,11 @@ dependencies:
   
   simple_animations: ^4.0.2
   flutter_colorpicker: ^1.0.3
+  flutter_bloc: ^8.0.1
+
+  image_gallery_saver: ^1.7.1
+  share_plus: ^4.0.4
+  path_provider: ^2.0.10
 
 dev_dependencies:
   flutter_test:
