@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/color_constant.dart';
+import 'package:smallnotes/view/constant/app_color.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 
