@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:smallnotes/core/provider/notes.dart';
-import 'package:smallnotes/view/constant/color_constant.dart';
-import 'package:smallnotes/view/constant/size_constant.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smallnotes/core/provider/notes_cubit.dart';
+import 'package:smallnotes/view/constant/app_color.dart';
+import 'package:smallnotes/view/constant/app_size.dart';
 import 'package:smallnotes/view/general/profile/components/favorite_num.dart';
 import 'package:smallnotes/view/general/profile/components/note_num.dart';
+import 'package:smallnotes/view/general/profile/show_item.dart';
 import 'package:smallnotes/view/widgets/fade_animations.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
@@ -17,47 +18,43 @@ class Profile extends NoteStatefulWidget {
 }
 
 class _ProfileState extends NoteState<Profile> {
-  _future() => Provider.of<NoteProvider>(context, listen: false).selectNote();
   final ScrollController _scrollController = ScrollController();
   int selectedTileIndex = 0;
+  Color setIconColor = AppColors.black;
+  @override
+  void initState() {
+    BlocProvider.of<NotesCubit>(context).selectNote();
+    BlocProvider.of<NotesCubit>(context).selectFavoriteNote();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(134, 232, 200, 193),
-      body: FutureBuilder(
-        future: _future(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: Text('...'));
+      backgroundColor: AppColors.brownLight,
+      body: BlocBuilder<NotesCubit, NotesState>(
+        builder: (context, state) {
+          final productProvider = BlocProvider.of<NotesCubit>(context);
+          if (state is NoteLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
-          final productProvider = Provider.of<NoteProvider>(context);
 
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             controller: _scrollController,
             children: [
               const Padding(padding: EdgeInsets.only(top: 25)),
-              Consumer<NoteProvider>(
-                child: Column(
-                  children: [
-                    _statisticsFavLen(productProvider: productProvider),
-                    const SizedBox(height: 250),
-                    Text(note.fmt(context, 'data.isEmpty')),
-                  ],
-                ),
-                builder: (context, productProvider, child) {
-                  if (productProvider.item.isEmpty) return child!;
-
-                  return Column(
-                    children: [
-                      _statisticsFavLen(productProvider: productProvider),
-                      const Padding(padding: EdgeInsets.only(bottom: 15)),
-                      _noteList(productProvider: productProvider),
-                    ],
-                  );
-                },
-              ),
+              Column(
+                children: [
+                  _statisticsFavLen(productProvider: productProvider),
+                  const Padding(padding: EdgeInsets.only(bottom: 15)),
+                  productProvider.item.isEmpty
+                      ? Align(
+                          heightFactor: 30,
+                          child: Text(note.fmt(context, 'data.isEmpty')))
+                      : _noteList(productProvider: productProvider),
+                ],
+              )
             ],
           );
         },
@@ -65,18 +62,20 @@ class _ProfileState extends NoteState<Profile> {
     );
   }
 
-  Row _statisticsFavLen({required NoteProvider productProvider}) {
+  Row _statisticsFavLen({
+    required NotesCubit productProvider,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         NoteNum(noteNum: productProvider.item.length),
-        FavoriteNum(favoriteNum: 5),
+        FavoriteNum(favoriteNum: productProvider.favoriteItem.length),
       ],
     );
   }
 
-  Widget _noteList({required NoteProvider productProvider}) {
+  Widget _noteList({required NotesCubit productProvider}) {
     return ListView.builder(
       controller: _scrollController,
       itemCount: productProvider.item.length,
@@ -97,7 +96,7 @@ class _ProfileState extends NoteState<Profile> {
   }
 
   Widget _dismissible(
-    NoteProvider productProvider,
+    NotesCubit productProvider,
     BuildContext context,
     NoteModel helper,
     int index,
@@ -136,43 +135,70 @@ class _ProfileState extends NoteState<Profile> {
     final titleStyle = TextStyle(color: Color(helper.textColor), fontSize: 18);
     final subtitleStyle =
         TextStyle(color: Color(helper.textColor), fontSize: 16);
-    final dateStyle = TextStyle(color: Color(helper.textColor), fontSize: 16);
-
-    if (helper.titleNote.length >= 15) {
-      helper.titleNote = '${helper.titleNote.substring(0, 15)}...';
-    }
+    final dateStyle = TextStyle(
+        color: Color(helper.textColor),
+        fontSize: 16,
+        fontWeight: FontWeight.bold);
 
     return InkWell(
-      onTap: () => setState(() => selectedTileIndex = index),
-      canRequestFocus: false,
-      enableFeedback: false,
-      excludeFromSemantics: false,
-      autofocus: false,
+      onTap: () {
+        setState(
+          () {
+            selectedTileIndex = index;
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (_) => ShowItem(
+                          isPage: true,
+                          id: helper.id,
+                          getTitleNote: helper.titleNote,
+                          getTextNote: helper.textNote,
+                          getDateCreate: helper.dateCreate,
+                          getBackgroundColor: helper.backgroundColor,
+                          getTextColor: helper.textColor,
+                        )),
+                (route) => true);
+          },
+        );
+      },
       child: Container(
-        height: 70,
-        width: size(context).width,
         margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        decoration: ViewUtils.smallDecoration(
           color:
               selectedTile ? AppColors.blueGrey : Color(helper.backgroundColor),
-          borderRadius: BorderRadius.circular(10),
+          radius: const Radius.circular(10),
         ),
-        child: Stack(
+        height: 70,
+        width: size(context).width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Positioned(
-              top: 7,
-              left: 7,
-              child: Text(helper.titleNote, style: titleStyle),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 5),
+                    width: size(context).width * .7,
+                    height: 30,
+                    color: AppColors.transparent,
+                    child: Text(
+                      helper.titleNote,
+                      style: titleStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                Text(helper.dateCreate, style: dateStyle, maxLines: 1),
+              ],
             ),
-            Positioned(
-              top: 7,
-              right: 7,
-              child: Text(helper.dateCreate, style: dateStyle, maxLines: 1),
-            ),
-            Positioned(
-              bottom: 7,
-              left: 7,
-              child: Text(helper.textNote, style: subtitleStyle, maxLines: 1),
+            Text(
+              helper.textNote,
+              style: subtitleStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
