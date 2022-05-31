@@ -46,8 +46,10 @@ class TextForm extends NoteStatelessWidget {
               width: 45,
               alignment: Alignment.center,
               decoration: ViewUtils.smallDecoration(),
-              child:
-                  Text('$noteLength', style: TextStyle(color: AppColors.white)),
+              child: Text(
+                '$noteLength',
+                style: TextStyle(color: AppColors.white),
+              ),
             ),
           )
         ],

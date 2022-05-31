@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smallnotes/core/utils/logger.dart';
 import 'package:smallnotes/view/constant/app_color.dart';
@@ -29,7 +28,7 @@ class ShowItem extends NoteStatefulWidget {
   }) : super(key: key);
   final bool? isPage;
   final String? id;
-  final String? getTitleNote;
+  String? getTitleNote;
   final String? getTextNote;
   final String? getDateCreate;
   final int? getBackgroundColor;
@@ -39,9 +38,12 @@ class ShowItem extends NoteStatefulWidget {
 }
 
 class _ShowItemState extends NoteState<ShowItem> {
-  ScrollController scrollController = ScrollController();
+  final scrollController = ScrollController();
+  final titleController = TextEditingController();
+  final textController = TextEditingController();
   final GlobalKey key = GlobalKey();
   Color iconColor = AppColors.black;
+  bool editItem = false;
   double fontSize = 15;
   @override
   void initState() {
@@ -64,6 +66,38 @@ class _ShowItemState extends NoteState<ShowItem> {
     );
   }
 
+  updateNote() {
+    setState(() {
+      editItem = false;
+    });
+  }
+
+  editNote() {
+    setState(() {
+      editItem = !editItem;
+    });
+  }
+
+  editTextNote() {}
+
+  editedTitleNote(title) async {
+    final productProvider = BlocProvider.of<NotesCubit>(context);
+    setState(() {
+      widget.getTitleNote = title;
+    });
+
+    await productProvider.updateFavoriteNoteById(
+      widget.id,
+      widget.getTextNote!,
+      widget.getTitleNote!,
+    );
+    await productProvider.updateNoteNameById(
+      widget.id,
+      widget.getTextNote!,
+      widget.getTitleNote!,
+    );
+  }
+
   takeScreenshot(context) async {
     RenderRepaintBoundary boundary =
         key.currentContext!.findRenderObject() as RenderRepaintBoundary;
@@ -71,11 +105,11 @@ class _ShowItemState extends NoteState<ShowItem> {
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
 
     if (byteData != null) {
-      final directory = (await getExternalStorageDirectory())!.path;
+      // final directory = (await getExternalStorageDirectory())!.path;
 
       Uint8List pngint8 = byteData.buffer.asUint8List();
       ImageGallerySaver.saveImage(Uint8List.fromList(pngint8),
-          quality: 90, name: '$directory/screenshot-${DateTime.now()}');
+          quality: 90, name: 'screenshot-${DateTime.now()}');
       final msg = note.fmt(context, 'save.image');
       await ViewUtils.showSnack(context, msg: msg, color: AppColors.green);
     } else {
@@ -110,7 +144,7 @@ class _ShowItemState extends NoteState<ShowItem> {
         context: context,
         builder: (_) => ViewUtils.generateDialog(
           context,
-          title: note.fmt(context, 'dialog.title'),
+          title: note.fmt(context, 'deleted.note'),
           cancelTitle: note.fmt(context, 'dialog.close'),
           actTitle: note.fmt(context, 'dialog.check'),
           onAct: () => removeItemFromDB(context),
@@ -140,6 +174,16 @@ class _ShowItemState extends NoteState<ShowItem> {
                         IconButton(
                           icon: Icon(Icons.favorite, color: iconColor),
                           onPressed: widget.isPage! ? addToFavorites : null,
+                        ),
+                        IconButton(
+                          icon: editItem
+                              ? Icon(Icons.check, color: AppColors.green)
+                              : Icon(Icons.edit, color: AppColors.black),
+                          onPressed: () => !editItem ? editNote() : updateNote(),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.color_lens, color: iconColor),
+                          onPressed: () {},
                         ),
                         IconButton(
                             onPressed: () => takeScreenshot(context),
@@ -199,33 +243,63 @@ class _ShowItemState extends NoteState<ShowItem> {
                   )
                 ]),
                 const SizedBox(height: 10),
-                Container(
-                  height: size(context).height - 60,
-                  width: size(context).width,
-                  padding: const EdgeInsets.all(5),
-                  decoration:
-                      ViewUtils.smallDecoration(color: AppColors.itemCardColor),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(widget.getTitleNote!,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.w500)),
-                        Text(widget.getTextNote!,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 200,
-                            style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.w400)),
-                      ],
-                    ),
-                  ),
-                )
+                editItem
+                    ? Container(
+                        height: size(context).height - 60,
+                        width: size(context).width,
+                        padding: const EdgeInsets.all(5),
+                        decoration: ViewUtils.smallDecoration(
+                            color: Color(widget.getBackgroundColor!)),
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                initialValue: '${widget.getTitleNote}',
+                                scrollPadding: const EdgeInsets.all(5),
+                                enabled: true,
+                                maxLines: 1,
+                                onChanged: (title) => editedTitleNote(title),
+                                decoration: ViewUtils.nonBorderDecoration(),
+                              ),
+                              TextFormField(
+                                initialValue: '${widget.getTextNote}',
+                                scrollPadding: const EdgeInsets.all(5),
+                                enabled: true,
+                                maxLines: 200,
+                                onChanged: (text) {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: size(context).height - 60,
+                        width: size(context).width,
+                        padding: const EdgeInsets.all(5),
+                        decoration: ViewUtils.smallDecoration(
+                            color: Color(widget.getBackgroundColor!)),
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(widget.getTitleNote!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.w500)),
+                              Text(widget.getTextNote!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 200,
+                                  style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.w400)),
+                            ],
+                          ),
+                        ),
+                      )
               ],
             ),
           ),

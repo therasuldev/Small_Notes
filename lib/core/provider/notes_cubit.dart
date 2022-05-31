@@ -133,13 +133,13 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  Future<void> updateNoteNameById(id, String textNote) async {
+  Future<void> updateNoteNameById(id, String textNote, String titleNote) async {
     emit(NoteLoading());
     try {
       final db = await DBHelper.database();
       await db.update(
         DBHelper.note,
-        {'textNote': textNote},
+        {'id': id, 'textNote': textNote, 'titleNote': titleNote},
         where: "id = ?",
         whereArgs: [id],
       );
@@ -234,13 +234,14 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  Future<void> updateFavoriteNoteById(id, String textNote) async {
+  Future<void> updateFavoriteNoteById(
+      id, String textNote, String titleNote) async {
     emit(NoteLoading());
     try {
       final db = await DBHelper.database();
       await db.update(
         DBHelper.favorite,
-        {'id': id, 'textNote': textNote},
+        {'id': id, 'textNote': textNote, 'titleNote': titleNote},
         where: "id = ?",
         whereArgs: [id],
       );

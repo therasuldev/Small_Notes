@@ -15,7 +15,7 @@ class AppRoute {
     '/generalHome': (context) => AppRoute.generalHome,
     '/favoritePG': (context) => AppRoute.favoritePG,
     '/showItem': (context) => AppRoute.showItem,
-    'profilePG':(context)=>AppRoute.profilePG,
+    '/profilePG':(context)=>AppRoute.profilePG,
   };
   
 }

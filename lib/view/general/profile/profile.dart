@@ -109,7 +109,7 @@ class _ProfileState extends NoteState<Profile> {
             builder: (_) {
               return ViewUtils.generateDialog(
                 context,
-                title: note.fmt(context, 'dialog.title'),
+                title: note.fmt(context, 'deleted.note'),
                 cancelTitle: note.fmt(context, 'dialog.close'),
                 actTitle: note.fmt(context, 'dialog.check'),
                 onAct: () {

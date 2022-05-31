@@ -3,11 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:smallnotes/core/provider/notes_cubit.dart';
 import 'package:smallnotes/view/constant/app_color.dart';
+import 'package:smallnotes/view/constant/app_route.dart';
 import 'package:smallnotes/view/general/home/components/text_form_widget.dart';
 import 'package:smallnotes/view/general/home/components/title_form_widget.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 import 'package:uuid/uuid.dart';
+
+import 'drawer/drawer_components.dart';
 
 class Home extends NoteStatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -19,6 +22,7 @@ class Home extends NoteStatefulWidget {
 class _HomeState extends NoteState<Home> {
   final titleNoteController = TextEditingController();
   final textNoteController = TextEditingController();
+  final route = AppRoute();
   final focusNode = FocusNode();
   Color pickerColor = AppColors.brownLight;
   Color backgroundColor = AppColors.white;
@@ -41,10 +45,7 @@ class _HomeState extends NoteState<Home> {
 
   void unFocus() {
     FocusScopeNode currentFocus = FocusScope.of(context);
-
-    if (currentFocus.previousFocus()) {
-      currentFocus.unfocus();
-    }
+    if (currentFocus.previousFocus()) currentFocus.unfocus();
   }
 
   void changePickerColor(Color color) => setState(() {
@@ -87,7 +88,8 @@ class _HomeState extends NoteState<Home> {
 
   void check() async {
     final result = (titleNoteController.text.length >= 4 &&
-        textNoteController.text.length >= 4);
+        textNoteController.text.length >= 4 &&
+        textNoteController.text.length <= 1000);
 
     if (result) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -117,7 +119,7 @@ class _HomeState extends NoteState<Home> {
       onTap: () => unFocus(),
       child: Scaffold(
         appBar: _textNote!.isEmpty ? _initViewAppBar() : _endViewAppBar(),
-        drawer: const Drawer(),
+        drawer: NoteDrawer(),
         body: SingleChildScrollView(
           child: Center(
             child: Column(
@@ -146,7 +148,7 @@ class _HomeState extends NoteState<Home> {
       actions: [
         IconButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/favoritePG');
+            Navigator.pushNamed(context, route.appRoutes.keys.elementAt(1));
           },
           icon: const Icon(Icons.favorite_border),
         )
@@ -162,10 +164,7 @@ class _HomeState extends NoteState<Home> {
             icon: Icon(Icons.color_lens, color: backgroundColor)),
         IconButton(
             onPressed: selectTextColor,
-            icon: Icon(
-              Icons.colorize_sharp,
-              color: textColor,
-            )),
+            icon: Icon(Icons.colorize_sharp, color: textColor)),
         IconButton(onPressed: close, icon: const Icon(Icons.close)),
         IconButton(onPressed: check, icon: const Icon(Icons.check)),
       ],
