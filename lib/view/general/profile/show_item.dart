@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:smallnotes/core/utils/logger.dart';
 import 'package:smallnotes/view/constant/app_color.dart';
 import 'package:smallnotes/view/constant/app_route.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
@@ -15,6 +15,7 @@ import '../../../core/provider/notes_cubit.dart';
 import '../../constant/app_size.dart';
 import '../../widgets/widgets.dart';
 
+// ignore: must_be_immutable
 class ShowItem extends NoteStatefulWidget {
   ShowItem({
     this.isPage,
@@ -29,7 +30,7 @@ class ShowItem extends NoteStatefulWidget {
   final bool? isPage;
   final String? id;
   String? getTitleNote;
-  final String? getTextNote;
+  String? getTextNote;
   final String? getDateCreate;
   final int? getBackgroundColor;
   final int? getTextColor;
@@ -43,6 +44,7 @@ class _ShowItemState extends NoteState<ShowItem> {
   final textController = TextEditingController();
   final GlobalKey key = GlobalKey();
   Color iconColor = AppColors.black;
+
   bool editItem = false;
   double fontSize = 15;
   @override
@@ -66,35 +68,27 @@ class _ShowItemState extends NoteState<ShowItem> {
     );
   }
 
-  updateNote() {
-    setState(() {
-      editItem = false;
-    });
-  }
+  editNote() => setState(() => editItem = !editItem);
+  editedNote() => setState(() => editItem = false);
 
-  editNote() {
-    setState(() {
-      editItem = !editItem;
-    });
-  }
-
-  editTextNote() {}
-
-  editedTitleNote(title) async {
+  updateNote({String? title, String? text}) async {
     final productProvider = BlocProvider.of<NotesCubit>(context);
     setState(() {
-      widget.getTitleNote = title;
+      widget.getTitleNote = title ?? widget.getTitleNote;
+      widget.getTextNote = text ?? widget.getTextNote;
     });
 
     await productProvider.updateFavoriteNoteById(
       widget.id,
       widget.getTextNote!,
       widget.getTitleNote!,
+      DateFormat('yyyy.MM.dd').format(DateTime.now()),
     );
     await productProvider.updateNoteNameById(
       widget.id,
       widget.getTextNote!,
       widget.getTitleNote!,
+      DateFormat('yyyy.MM.dd').format(DateTime.now()),
     );
   }
 
@@ -120,14 +114,12 @@ class _ShowItemState extends NoteState<ShowItem> {
 
   onShareWithResult() async {
     final box = context.findRenderObject() as RenderBox?;
-    ShareResult result;
 
-    result = await Share.shareWithResult(
+    await Share.shareWithResult(
       widget.getTextNote!,
       subject: widget.getTitleNote,
       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
     );
-    Log.d(result.status.name);
   }
 
   removeItemFromDB(context) async {
@@ -179,11 +171,8 @@ class _ShowItemState extends NoteState<ShowItem> {
                           icon: editItem
                               ? Icon(Icons.check, color: AppColors.green)
                               : Icon(Icons.edit, color: AppColors.black),
-                          onPressed: () => !editItem ? editNote() : updateNote(),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.color_lens, color: iconColor),
-                          onPressed: () {},
+                          onPressed: () =>
+                              !editItem ? editNote() : editedNote(),
                         ),
                         IconButton(
                             onPressed: () => takeScreenshot(context),
@@ -256,18 +245,24 @@ class _ShowItemState extends NoteState<ShowItem> {
                             children: [
                               TextFormField(
                                 initialValue: '${widget.getTitleNote}',
-                                scrollPadding: const EdgeInsets.all(5),
+                                scrollPadding: const EdgeInsets.all(0),
                                 enabled: true,
-                                maxLines: 1,
-                                onChanged: (title) => editedTitleNote(title),
+                                maxLines: 2,
+                                onChanged: (title) => updateNote(title: title),
                                 decoration: ViewUtils.nonBorderDecoration(),
+                                style: TextStyle(
+                                    color: Color(widget.getTextColor!)),
                               ),
                               TextFormField(
                                 initialValue: '${widget.getTextNote}',
-                                scrollPadding: const EdgeInsets.all(5),
+                                scrollPadding: const EdgeInsets.all(0),
                                 enabled: true,
-                                maxLines: 200,
-                                onChanged: (text) {},
+                                maxLines: 100,
+                                maxLength: 1000,
+                                onChanged: (text) => updateNote(text: text),
+                                decoration: ViewUtils.nonBorderDecoration(),
+                                style: TextStyle(
+                                    color: Color(widget.getTextColor!)),
                               ),
                             ],
                           ),
@@ -289,13 +284,15 @@ class _ShowItemState extends NoteState<ShowItem> {
                                   maxLines: 2,
                                   style: TextStyle(
                                       fontSize: fontSize,
-                                      fontWeight: FontWeight.w500)),
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(widget.getTextColor!))),
                               Text(widget.getTextNote!,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 200,
                                   style: TextStyle(
                                       fontSize: fontSize,
-                                      fontWeight: FontWeight.w400)),
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(widget.getTextColor!))),
                             ],
                           ),
                         ),

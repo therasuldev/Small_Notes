@@ -13,6 +13,7 @@ class ViewUtils {
       disabledBorder: InputBorder.none,
       focusedErrorBorder: InputBorder.none,
       hintStyle: TextStyle(color: AppColors.brownAccent),
+    
     );
   }
 

@@ -99,7 +99,7 @@ class _HomeState extends NoteState<Home> {
         id: const Uuid().v1(),
         titleNote: titleNoteController.text.trim(),
         textNote: textNoteController.text.trim(),
-        dateCreate: DateFormat('yyyy.MM.dd').format(DateTime.now()).toString(),
+        dateCreate: DateFormat('yyyy.MM.dd').format(DateTime.now()),
         backgroundColor: backgroundColor.value,
         textColor: textColor.value,
       );

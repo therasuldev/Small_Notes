@@ -2,13 +2,9 @@ part of 'notes_cubit.dart';
 
 class NotesState {}
 
-class NoteInitial extends NotesState {
-   String dataisEmpty = 'data yoxdur';
-}
+class NoteInitial extends NotesState {}
 
-class NoteLoading extends NotesState {
- 
-}
+class NoteLoading extends NotesState {}
 
 class NoteSuccess extends NotesState {}
 

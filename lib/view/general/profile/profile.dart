@@ -20,7 +20,6 @@ class Profile extends NoteStatefulWidget {
 class _ProfileState extends NoteState<Profile> {
   final ScrollController _scrollController = ScrollController();
   int selectedTileIndex = 0;
-  Color setIconColor = AppColors.black;
   @override
   void initState() {
     BlocProvider.of<NotesCubit>(context).selectNote();
@@ -36,27 +35,30 @@ class _ProfileState extends NoteState<Profile> {
         builder: (context, state) {
           final productProvider = BlocProvider.of<NotesCubit>(context);
           if (state is NoteLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+                child: CircularProgressIndicator(color: AppColors.blueGrey));
           }
-
-          return ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: _scrollController,
-            children: [
-              const Padding(padding: EdgeInsets.only(top: 25)),
-              Column(
-                children: [
-                  _statisticsFavLen(productProvider: productProvider),
-                  const Padding(padding: EdgeInsets.only(bottom: 15)),
-                  productProvider.item.isEmpty
-                      ? Align(
-                          heightFactor: 30,
-                          child: Text(note.fmt(context, 'data.isEmpty')))
-                      : _noteList(productProvider: productProvider),
-                ],
-              )
-            ],
-          );
+          if (state is NoteSuccess) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: _scrollController,
+              children: [
+                const Padding(padding: EdgeInsets.only(top: 25)),
+                Column(
+                  children: [
+                    _statisticsFavLen(productProvider: productProvider),
+                    const Padding(padding: EdgeInsets.only(bottom: 15)),
+                    productProvider.item.isEmpty
+                        ? Align(
+                            heightFactor: 30,
+                            child: Text(note.fmt(context, 'data.isEmpty')))
+                        : _noteList(productProvider: productProvider),
+                  ],
+                )
+              ],
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
     );
@@ -83,12 +85,7 @@ class _ProfileState extends NoteState<Profile> {
         var helper = productProvider.item[index];
         return FadeAnimation(
           delay: index / 5,
-          child: _dismissible(
-            productProvider,
-            context,
-            helper,
-            index,
-          ),
+          child: _dismissible(productProvider, context, helper, index),
         );
       },
       shrinkWrap: true,
@@ -114,6 +111,7 @@ class _ProfileState extends NoteState<Profile> {
                 actTitle: note.fmt(context, 'dialog.check'),
                 onAct: () {
                   productProvider.deleteNoteById(helper.id);
+                  productProvider.deleteFavoriteNoteById(helper.id);
                   productProvider.item.removeAt(index);
                   Navigator.pop(context);
                 },

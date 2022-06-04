@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smallnotes/view/constant/app_route.dart';
+import 'package:smallnotes/view/constant/app_size.dart';
 
 import '../../../constant/app_color.dart';
 import '../../../widgets/widgets.dart';
@@ -23,7 +24,7 @@ class NoteDrawer extends NoteStatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          const Padding(padding: EdgeInsets.only(top: 40)),
+          SizedBox(height: MediaQuery.of(context).padding.top) ,
           CircleAvatar(
               minRadius: 50,
               backgroundColor: AppColors.brown200,

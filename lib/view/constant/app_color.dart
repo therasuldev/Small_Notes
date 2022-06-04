@@ -16,6 +16,6 @@ class AppColors {
   static Color green = Colors.green;
   static Color brown200 = const Color.fromARGB(255, 232, 215, 207);
   static Color grey = Colors.grey;
-  static Color itemCardColor = Color.fromARGB(255, 230, 118, 118);
+  static Color itemCardColor = const Color.fromARGB(255, 230, 118, 118);
   static Color yellow = const Color.fromARGB(255, 255, 230, 1);
 }
