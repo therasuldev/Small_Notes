@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smallnotes/core/provider/notes_cubit.dart';
+import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
+import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
 import 'package:smallnotes/view/constant/app_color.dart';
 import 'package:smallnotes/view/constant/app_size.dart';
 import 'package:smallnotes/view/general/profile/components/favorite_num.dart';
@@ -19,11 +20,12 @@ class Profile extends NoteStatefulWidget {
 
 class _ProfileState extends NoteState<Profile> {
   final ScrollController _scrollController = ScrollController();
+  final String noData = 'assets/lottie/empty.json';
   int selectedTileIndex = 0;
   @override
   void initState() {
-    BlocProvider.of<NotesCubit>(context).selectNote();
-    BlocProvider.of<NotesCubit>(context).selectFavoriteNote();
+    BlocProvider.of<NotesBloc>(context).add(GetNoteEvent());
+    BlocProvider.of<FavoriteBloc>(context).add(GetFavoritesEvent());
     super.initState();
   }
 
@@ -31,28 +33,160 @@ class _ProfileState extends NoteState<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.brownLight,
-      body: BlocBuilder<NotesCubit, NotesState>(
+      body: BlocBuilder<NotesBloc, NotesState>(
         builder: (context, state) {
-          final productProvider = BlocProvider.of<NotesCubit>(context);
-          if (state is NoteLoading) {
+          final nProvider = BlocProvider.of<NotesBloc>(context);
+          final fProvider = BlocProvider.of<FavoriteBloc>(context);
+          if (state is Loading) {
             return Center(
                 child: CircularProgressIndicator(color: AppColors.blueGrey));
           }
-          if (state is NoteSuccess) {
+          if (state is Success) {
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               controller: _scrollController,
               children: [
-                const Padding(padding: EdgeInsets.only(top: 25)),
+                const Padding(padding: EdgeInsets.only(top: 15)),
                 Column(
                   children: [
-                    _statisticsFavLen(productProvider: productProvider),
+                    _statisticsFavLen(
+                        noteProvider: nProvider, favoriteProvider: fProvider),
                     const Padding(padding: EdgeInsets.only(bottom: 15)),
-                    productProvider.item.isEmpty
-                        ? Align(
-                            heightFactor: 30,
-                            child: Text(note.fmt(context, 'data.isEmpty')))
-                        : _noteList(productProvider: productProvider),
+                    // state.keys[0]==''
+                    //     ? Lottie.asset(noData, repeat: false)
+                    //     :
+                    ListView.builder(
+                      controller: _scrollController,
+                      itemCount: state.keys?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final item = state.values[index];
+                        final selectedTile = selectedTileIndex == index;
+                        return FadeAnimation(
+                          delay: index / (index + 3),
+                          child: Dismissible(
+                            confirmDismiss: (direction) async {
+                              if (direction == DismissDirection.startToEnd) {
+                                return showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return ViewUtils.generateDialog(
+                                      context,
+                                      title: note.fmt(context, 'deleted.note'),
+                                      cancelTitle:
+                                          note.fmt(context, 'dialog.close'),
+                                      actTitle:
+                                          note.fmt(context, 'dialog.check'),
+                                      onAct: () {
+                                        context.read<NotesBloc>().add(
+                                            RemoveNoteEvent(
+                                                id: state.keys[index]));
+                                        context.read<FavoriteBloc>().add(
+                                            RemoveFavoriteEvent(
+                                                id: state.keys[index]));
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                );
+                              }
+                              return false;
+                            },
+                            key: ValueKey(state.keys[index]),
+                            background: Container(color: AppColors.red),
+                            secondaryBackground:
+                                Container(color: AppColors.green),
+                            child: InkWell(
+                              onTap: () {
+                                setState(
+                                  () {
+                                    selectedTileIndex = index;
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(builder: (_) {
+                                      return ShowItem(
+                                          isPage: true,
+                                          id: state.keys[index],
+                                          getTitleNote: item['titleNote'],
+                                          getTextNote: item['textNote'],
+                                          getDateCreate: item['dateCreate'],
+                                          getBackgroundColor:
+                                              item['backgroundColor'],
+                                          getTextColor: item['textColor']);
+                                    }), (route) => true);
+                                  },
+                                );
+                              },
+                              child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 3),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
+                                  decoration: ViewUtils.kDecor(
+                                      color: selectedTile
+                                          ? AppColors.blueGrey
+                                              .withOpacity(.6)
+                                              .value
+                                          : item[
+                                              'backgroundColor'], //helper.backgroundColor,
+                                      bR: 7,
+                                      tL: 7,
+                                      tR: 7,
+                                      bL: 7),
+                                  height: 70,
+                                  width: size(context).width,
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    right: 5),
+                                                width: size(context).width * .7,
+                                                height: 30,
+                                                color: AppColors.transparent,
+                                                child: Text(
+                                                  item['titleNote'],
+                                                  style: TextStyle(
+                                                      color: Color(
+                                                          item['textColor']),
+                                                      fontSize: 18),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(item['dateCreate'],
+                                                style: TextStyle(
+                                                    color: Color(
+                                                        item['textColor']),
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                maxLines: 1),
+                                          ],
+                                        ),
+                                        Text(
+                                          item['textNote'],
+                                          style: TextStyle(
+                                              color: Color(item['textColor']),
+                                              fontSize: 16),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ])),
+                            ),
+                          ),
+                        );
+                      },
+                      shrinkWrap: true,
+                    ),
                   ],
                 )
               ],
@@ -65,142 +199,16 @@ class _ProfileState extends NoteState<Profile> {
   }
 
   Row _statisticsFavLen({
-    required NotesCubit productProvider,
+    required NotesBloc noteProvider,
+    required FavoriteBloc favoriteProvider,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        NoteNum(noteNum: productProvider.item.length),
-        FavoriteNum(favoriteNum: productProvider.favoriteItem.length),
+        NoteNum(numN: noteProvider.dbnHelper.service.keys.length),
+        FavoriteNum(numF: favoriteProvider.dbfHelper.service.keys.length),
       ],
-    );
-  }
-
-  Widget _noteList({required NotesCubit productProvider}) {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: productProvider.item.length,
-      itemBuilder: (context, index) {
-        var helper = productProvider.item[index];
-        return FadeAnimation(
-          delay: index / 5,
-          child: _dismissible(productProvider, context, helper, index),
-        );
-      },
-      shrinkWrap: true,
-    );
-  }
-
-  Widget _dismissible(
-    NotesCubit productProvider,
-    BuildContext context,
-    NoteModel helper,
-    int index,
-  ) {
-    return Dismissible(
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          return showDialog(
-            context: context,
-            builder: (_) {
-              return ViewUtils.generateDialog(
-                context,
-                title: note.fmt(context, 'deleted.note'),
-                cancelTitle: note.fmt(context, 'dialog.close'),
-                actTitle: note.fmt(context, 'dialog.check'),
-                onAct: () {
-                  productProvider.deleteNoteById(helper.id);
-                  productProvider.deleteFavoriteNoteById(helper.id);
-                  productProvider.item.removeAt(index);
-                  Navigator.pop(context);
-                },
-              );
-            },
-          );
-        }
-        return false;
-      },
-      key: ValueKey(productProvider.item[index].id),
-      background: Container(color: AppColors.red),
-      secondaryBackground: Container(color: AppColors.green),
-      child: _notesTile(helper, index),
-    );
-  }
-
-  Widget _notesTile(NoteModel helper, int index) {
-    final selectedTile = selectedTileIndex == index;
-    final titleStyle = TextStyle(color: Color(helper.textColor), fontSize: 18);
-    final subtitleStyle =
-        TextStyle(color: Color(helper.textColor), fontSize: 16);
-    final dateStyle = TextStyle(
-        color: Color(helper.textColor),
-        fontSize: 16,
-        fontWeight: FontWeight.bold);
-
-    return InkWell(
-      onTap: () {
-        setState(
-          () {
-            selectedTileIndex = index;
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (_) => ShowItem(
-                          isPage: true,
-                          id: helper.id,
-                          getTitleNote: helper.titleNote,
-                          getTextNote: helper.textNote,
-                          getDateCreate: helper.dateCreate,
-                          getBackgroundColor: helper.backgroundColor,
-                          getTextColor: helper.textColor,
-                        )),
-                (route) => true);
-          },
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-        padding: const EdgeInsets.symmetric(horizontal: 3),
-        decoration: ViewUtils.smallDecoration(
-          color:
-              selectedTile ? AppColors.blueGrey : Color(helper.backgroundColor),
-          radius: const Radius.circular(10),
-        ),
-        height: 70,
-        width: size(context).width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 5),
-                    width: size(context).width * .7,
-                    height: 30,
-                    color: AppColors.transparent,
-                    child: Text(
-                      helper.titleNote,
-                      style: titleStyle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                Text(helper.dateCreate, style: dateStyle, maxLines: 1),
-              ],
-            ),
-            Text(
-              helper.textNote,
-              style: subtitleStyle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

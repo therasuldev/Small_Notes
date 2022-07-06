@@ -3,6 +3,8 @@ import 'package:smallnotes/view/constant/app_size.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 
+import '../../../constant/app_color.dart';
+
 class TitleForm extends NoteStatelessWidget {
   TitleForm({
     required this.titleNoteController,
@@ -18,7 +20,13 @@ class TitleForm extends NoteStatelessWidget {
     return Container(
       height: 50,
       width: size(context).width * .9,
-      decoration: ViewUtils.formDecoration(),
+      decoration: ViewUtils.kDecor(
+          color: AppColors.brownLight.value,
+          borderColor: AppColors.black.value,
+          tR: 10,
+          tL: 10,
+          bL: 10,
+          bR: 10),
       padding: const EdgeInsets.only(left: 7, top: 0),
       margin: const EdgeInsets.only(top: 30),
       child: TextFormField(

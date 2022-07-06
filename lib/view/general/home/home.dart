@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:smallnotes/core/provider/notes_cubit.dart';
+import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
 import 'package:smallnotes/view/constant/app_color.dart';
 import 'package:smallnotes/view/constant/app_route.dart';
 import 'package:smallnotes/view/general/home/components/text_form_widget.dart';
@@ -10,7 +10,7 @@ import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 import 'package:uuid/uuid.dart';
 
-import 'drawer/drawer_components.dart';
+import '../../widgets/drawer_components.dart';
 
 class Home extends NoteStatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -40,7 +40,7 @@ class _HomeState extends NoteState<Home> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<NotesCubit>(context);
+    BlocProvider.of<NotesBloc>(context);
   }
 
   void unFocus() {
@@ -48,14 +48,14 @@ class _HomeState extends NoteState<Home> {
     if (currentFocus.previousFocus()) currentFocus.unfocus();
   }
 
-  void changePickerColor(Color color) => setState(() {
+  void changePickerColorForBackground(Color color) => setState(() {
         pickerColor = color;
         backgroundColor = pickerColor;
       });
-
-  void changeToBlack() => setState(() => textColor = AppColors.black);
-
-  void changeToWhite() => setState(() => textColor = AppColors.white);
+  void changePickerColorForText(Color color) => setState(() {
+        pickerColor = color;
+        textColor = pickerColor;
+      });
 
   selectColor() {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -66,16 +66,18 @@ class _HomeState extends NoteState<Home> {
       selectColor: selectColor,
       changeColor: changeColor,
       pickerColor: pickerColor,
-      changePickerColor: changePickerColor,
+      changePickerColor: changePickerColorForBackground,
     );
   }
 
   selectTextColor() {
     FocusScope.of(context).requestFocus(FocusNode());
-    return ViewUtils.showMENU(
+    final selectColor = note.fmt(context, 'select.text.color');
+    return ViewUtils.selectTextColorSheet(
       context: context,
-      whiteColor: changeToWhite,
-      blackColor: changeToBlack,
+      textColor: selectColor,
+      pickerColor: pickerColor,
+      changePickerColor: changePickerColorForText,
     );
   }
 
@@ -93,16 +95,15 @@ class _HomeState extends NoteState<Home> {
 
     if (result) {
       FocusScope.of(context).requestFocus(FocusNode());
-      final productProvider = BlocProvider.of<NotesCubit>(context);
-
-      await productProvider.insertDatabase(
-        id: const Uuid().v1(),
-        titleNote: titleNoteController.text.trim(),
-        textNote: textNoteController.text.trim(),
-        dateCreate: DateFormat('yyyy.MM.dd').format(DateTime.now()),
-        backgroundColor: backgroundColor.value,
-        textColor: textColor.value,
-      );
+      final nProvider = BlocProvider.of<NotesBloc>(context);
+      final values = ({
+        'titleNote': titleNoteController.text.trim(),
+        'textNote': textNoteController.text.trim(),
+        'dateCreate': DateFormat('yyyy.MM.dd').format(DateTime.now()),
+        'backgroundColor': backgroundColor.value,
+        'textColor': textColor.value,
+      });
+      nProvider.add(AddNoteEvent(id: const Uuid().v4(), values: values));
       titleNoteController.clear();
       textNoteController.clear();
       setState(() => _textNote = '');
