@@ -1,0 +1,40 @@
+{
+    "app.title": "Блокнот",
+    "app.pres": "Small Colored Notes - 2022",
+
+    "lang.az": "az",
+    "lang.ru": "ru",
+
+    "app.lang":"Язык приложения",
+
+    "note.title": "Заголовок ..",
+    "note.text": "Введите текст..",
+
+    "bottom_navbar.note.add": "главное",
+    "bottom_navbar.notes": "заметки",
+
+    "error.snack": "BaВведите не менее 4 символов в названии. Введите текст не менее 4, не более 1000 символов.şlığı ən az 4 simvol girin. Mətni ən az 4, ən çox 1000 simvol girin.",
+    "error.unknown": "Произошла неизвестная ошибка.",
+
+    "data.isEmpty": "Нет заметок",
+
+    "save.image": "Фотография была сохранена в галерее.",
+
+    "dialog.check": "Да",
+    "dialog.close": "Нет",
+
+    "deleted.note": "Хотите удалить заметку?",
+    "deleted.favorite": "Хотите удалить избранное?",
+
+    "change.color": "Изменить цвет",
+    
+    "select.background.color": "Выберите цвет фона",
+    "select.text.color": "",
+    "select.font.size": "измерение",
+    
+    "drawer.1": "Избранное",
+    "drawer.2": "Делиться",
+    "drawer.3": "Цените нас",
+    "drawer.4": "Настройки",
+    "drawer.5": "Свяжитесь с нами"
+}

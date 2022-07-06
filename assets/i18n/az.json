@@ -1,5 +1,11 @@
 {
     "app.title": "Qeyd dəftəri",
+    "app.pres":"Small Colored Notes - 2022",
+
+    "lang.az":"az", 
+    "lang.ru":"ru",
+
+    "app.lang":"Tətbiq dili",
 
     "note.title": "Başlıq..",
     "note.text": "Mətni daxil edin..",
@@ -23,7 +29,14 @@
     "change.color":"Rəng dəyişdir",
 
     "select.background.color":"Arxa fon rəngini seçin",
-    "select.text.color":""
+    "select.text.color":"Yazı rəngini seçin",
+    "select.font.size":"ölçü", 
+
+    "drawer.1":"Favoritlər",
+    "drawer.2":"Paylaş", 
+    "drawer.3":"Bizi qiymətləndirin",
+    "drawer.4":"Parametrlər",
+    "drawer.5":"Bizimlə əlaqə"
 
 
 }
