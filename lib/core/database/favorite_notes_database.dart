@@ -1,23 +1,24 @@
-import 'package:smallnotes/core/service/note_service.dart';
+import 'package:smallnotes/core/service/favorite_service.dart';
 
-class DBNHelper {
-  final service = NoteService.noteService;
+class DBFHelper {
+  final service = FavoriteService.favoriteService;
 
-  Future<dynamic> addNote(String id, Map<dynamic, dynamic> values) async {
+  Future<dynamic> addToFavorites(
+      String id, Map<dynamic, dynamic> values) async {
     return await service.put(id, values);
   }
 
-  Future<List<dynamic>> getNotes() async {
+  Future<List<dynamic>> getFavorites() async {
     var keys = service.keys.toList();
     var values = service.values.toList();
-    List allNotes = [
+    List allFavoriteNotes = [
       [...keys],
       [...values]
     ];
-    return allNotes;
+    return allFavoriteNotes;
   }
 
-  Future<List<dynamic>> removeNote(String key) async {
+  Future<List<dynamic>> removeFavorite(String key) async {
     await service.delete(key);
     var keys = service.keys.toList();
     var values = service.values.toList();
@@ -28,15 +29,15 @@ class DBNHelper {
     return remainingNotes;
   }
 
-  Future<List<dynamic>> updateNote(
+  Future<List<dynamic>> updateFavoriteNote(
       String id, Map<dynamic, dynamic> value) async {
     await service.put(id, value);
     var keys = service.keys.toList();
     var values = service.values.toList();
-    List newNotes = [
+    List newFavoriteNote = [
       [...keys],
       [...values]
     ];
-    return newNotes;
+    return newFavoriteNote;
   }
 }
