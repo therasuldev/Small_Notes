@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
 
-enum AnimationType { opacity, translateX }
+enum AnimationType { opacity, translateY }
 
-class FadeAnimation extends NoteStatelessWidget {
+class FadeAnimation extends StatelessWidget {
   final double delay;
   final Widget child;
 
-  FadeAnimation({required this.delay, required this.child, Key? key})
+  const FadeAnimation({required this.delay, required this.child, Key? key})
       : super(key: key);
 
   @override
@@ -20,8 +19,8 @@ class FadeAnimation extends NoteStatelessWidget {
         const Duration(milliseconds: 500),
       )
       ..add(
-        AnimationType.translateX,
-        Tween(begin: 30.0, end: 1.0),
+        AnimationType.translateY,
+        Tween(begin: -30.0, end: 1.0),
         const Duration(milliseconds: 500),
       );
 
@@ -33,7 +32,7 @@ class FadeAnimation extends NoteStatelessWidget {
       builder: (context, child, value) => Opacity(
         opacity: value.get(AnimationType.opacity),
         child: Transform.translate(
-            offset: Offset(value.get(AnimationType.translateX), 0),
+            offset: Offset(0, -value.get(AnimationType.translateY)),
             child: child),
       ),
     );
