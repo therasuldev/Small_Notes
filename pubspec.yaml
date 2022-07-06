@@ -51,6 +51,12 @@ dependencies:
   image_gallery_saver: ^1.7.1
   share_plus: ^4.0.4
   path_provider: ^2.0.10
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  lottie: ^1.3.0
+  flutter_svg: ^1.1.1+1
+  equatable: ^2.0.3
+  json_annotation: ^4.5.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +68,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.1.11
+  freezed: ^2.0.3+1
+  freezed_annotation: ^2.0.3
+  json_serializable: ^6.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -77,6 +87,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/i18n/
+    - assets/lottie/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
