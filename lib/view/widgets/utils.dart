@@ -13,7 +13,6 @@ class ViewUtils {
       disabledBorder: InputBorder.none,
       focusedErrorBorder: InputBorder.none,
       hintStyle: TextStyle(color: AppColors.brownAccent),
-    
     );
   }
 
@@ -102,73 +101,60 @@ class ViewUtils {
         );
       },
     );
-  }
+  } 
 
-  static showMENU({
+  static selectTextColorSheet({
     required BuildContext context,
-    required void Function()? whiteColor,
-    required void Function()? blackColor,
-  }) async {
-    return await showMenu(
+    required String textColor,
+    required Color pickerColor,
+    required void Function(Color) changePickerColor,
+  }) {
+    return showModalBottomSheet(
       context: context,
-      color: AppColors.grey,
-      position: const RelativeRect.fromLTRB(300.0, 100.0, 50.0, 600.0),
-      items: [
-        PopupMenuItem(
+      isScrollControlled: true,
+      shape: ViewUtils.shapeBorder(),
+      backgroundColor: AppColors.brown200,
+      builder: (context) {
+        const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
+
+        return SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              PopupMenuItem(
-                onTap: whiteColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("ağ"),
-                    Icon(Icons.circle, color: AppColors.white),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                onTap: blackColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("qara"),
-                    Icon(Icons.circle, color: AppColors.black),
-                  ],
-                ),
-              ),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 15),
+              Text(textColor, style: style),
+              const SizedBox(height: 10),
+              ColorPicker(
+                  pickerColor: pickerColor, onColorChanged: changePickerColor),
+              const SizedBox(height: 10)
             ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  static formDecoration() {
+  static kDecor({
+    int? color,
+    double? bR,
+    double? tL,
+    double? tR,
+    double? bL,
+    int? borderColor,
+    double? borderWidth,
+  }) {
     return BoxDecoration(
-      color: AppColors.brownLight,
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: AppColors.black, width: .5),
-    );
-  }
-
-  static favoriteCardDecoration(int color) {
-    return BoxDecoration(
-        color: Color(color),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(width: .5));
-  }
-
-  static smallDecoration({Color? color, Radius? radius}) {
-    return BoxDecoration(
-      color: color ?? AppColors.blueGrey,
+      color: Color(color ?? 0x00000000),
       borderRadius: BorderRadius.only(
-        bottomRight: radius ?? const Radius.circular(10),
-        topLeft: radius ?? const Radius.circular(10),
-        topRight: radius ?? Radius.zero,
-        bottomLeft: radius ?? Radius.zero,
+        bottomRight: Radius.circular(bR ?? 0),
+        topLeft: Radius.circular(tL ?? 0),
+        topRight: Radius.circular(tR ?? 0),
+        bottomLeft: Radius.circular(bL ?? 0),
       ),
+      border: Border.all(
+          color: Color(borderColor ?? color ?? 0xFF000000),
+          width: borderWidth ?? 0.5),
     );
   }
 
@@ -187,14 +173,6 @@ class ViewUtils {
     ], borderRadius: BorderRadius.only(bottomRight: Radius.circular(15)));
   }
 
-  static decorationForProfAppBar(Color color) {
-    return BoxDecoration(
-      color: AppColors.white,
-      border: Border.all(color: color, width: 2),
-      borderRadius: BorderRadius.circular(10),
-    );
-  }
-
   static shapeBorder() {
     return const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)));
@@ -211,6 +189,13 @@ class ViewUtils {
       cut: true,
       selectAll: true,
     );
+  }
+
+  static fStyle({double? fSize, int? color, int? bold}) {
+    return TextStyle(
+        fontSize: fSize ?? 14,
+        color: Color(color ?? 0x00000000),
+        fontWeight: FontWeight.values[bold ?? 2]);
   }
 
   // showSnack shows easy-modifiable snack bar.
