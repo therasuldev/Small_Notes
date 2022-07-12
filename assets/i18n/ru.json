@@ -1,4 +1,6 @@
 {
+    "team": "R.R. TEAM",
+
     "app.title": "Блокнот",
     "app.pres": "Small Colored Notes - 2022",
 
@@ -36,5 +38,12 @@
     "drawer.2": "Делиться",
     "drawer.3": "Цените нас",
     "drawer.4": "Настройки",
-    "drawer.5": "Свяжитесь с нами"
+    "drawer.5": "Свяжитесь с нами",
+
+    "settings.grid": "Форма расположения нот",
+    "settings.cache": "очистить кеш",
+    "settings.exit": "Выход",
+
+    "grid.view": "2x2",
+    "list": "список"
 }

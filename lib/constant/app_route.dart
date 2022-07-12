@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smallnotes/view/general/components/favorite.dart';
 import 'package:smallnotes/view/general_home.dart';
 
-import '../general/components/favorite.dart';
-import '../general/profile/profile.dart';
-import '../general/profile/show_item.dart';
+
+import '../view/general/profile/profile.dart';
+import '../view/general/profile/show_item.dart';
 
 class AppRoute {
   static get generalHome => GeneralHome();

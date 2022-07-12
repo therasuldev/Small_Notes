@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 
 // An item object for [PopUpMenuBar].
 class PopUpMenuBarItem {
@@ -9,7 +10,7 @@ class PopUpMenuBarItem {
 }
 
 // A modified pop up menu widget.
-class PopUpMenuBar extends StatelessWidget {
+class PopUpMenuBar extends NoteStatelessWidget {
   final List<PopUpMenuBarItem> items;
   final Function(int index) onSelect;
   final IconData baseIcon;
@@ -17,7 +18,7 @@ class PopUpMenuBar extends StatelessWidget {
   final Color iconColor;
   final BorderSide border;
 
-  const PopUpMenuBar({
+  PopUpMenuBar({
     Key? key,
     required this.items,
     required this.onSelect,

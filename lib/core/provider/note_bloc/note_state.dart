@@ -14,13 +14,12 @@ class Loading extends NotesState {
 }
 
 class Success extends NotesState {
-  final dynamic keys;
-  final dynamic values;
-  final List<dynamic>? item;
+  final List<NoteModel> model;
 
-  Success({this.keys, this.values, this.item});
+  Success({required this.model});
+
   @override
-  List<Object?> get props => [item,keys,values];
+  List<Object?> get props => [model];
 }
 
 class Error extends NotesState {

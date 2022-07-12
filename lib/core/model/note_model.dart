@@ -1,17 +1,25 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-part 'note_model.freezed.dart';
 part 'note_model.g.dart';
 
-@freezed
-class NoteModel with _$NoteModel {
-  factory NoteModel({
-    required String titleNote,
-    required String textNote,
-    required String dateCreate,
-    required int backgroundColor,
-    required int textColor,
-  }) = _NoteModel;
-  factory NoteModel.fromJson(Map<String, dynamic> json) =>
-      _$NoteModelFromJson(json);
+@HiveType(typeId: 0)
+class NoteModel {
+  @HiveField(0)
+  final String titleNote;
+  @HiveField(1)
+  final String textNote;
+  @HiveField(2)
+  final String dateCreate;
+  @HiveField(3)
+  final int backgroundColor;
+  @HiveField(4)
+  final int textColor;
+
+  NoteModel({
+    required this.titleNote,
+    required this.textNote,
+    required this.dateCreate,
+    required this.backgroundColor,
+    required this.textColor,
+  });
 }

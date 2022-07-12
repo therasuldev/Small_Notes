@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:smallnotes/view/constant/app_color.dart';
+
+import '../../constant/app_color.dart';
 
 class ViewUtils {
+  static underlineBorderDecoration({String? hint}) {
+    final underlineInputBorder =
+        UnderlineInputBorder(borderSide: BorderSide(color: AppColors.blue));
+    return InputDecoration(
+      hintText: hint,
+      border: underlineInputBorder,
+      focusedBorder: underlineInputBorder,
+      enabledBorder: underlineInputBorder,
+      errorBorder: InputBorder.none,
+      disabledBorder: underlineInputBorder,
+      focusedErrorBorder: InputBorder.none,
+      hintStyle: TextStyle(color: AppColors.brownAccent),
+    );
+  }
+
   static nonBorderDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
@@ -101,7 +117,7 @@ class ViewUtils {
         );
       },
     );
-  } 
+  }
 
   static selectTextColorSheet({
     required BuildContext context,
@@ -135,60 +151,105 @@ class ViewUtils {
     );
   }
 
-  static kDecor({
-    int? color,
-    double? bR,
-    double? tL,
-    double? tR,
-    double? bL,
-    int? borderColor,
-    double? borderWidth,
-  }) {
+  static favoriteCard({int? color}) {
     return BoxDecoration(
       color: Color(color ?? 0x00000000),
-      borderRadius: BorderRadius.only(
-        bottomRight: Radius.circular(bR ?? 0),
-        topLeft: Radius.circular(tL ?? 0),
-        topRight: Radius.circular(tR ?? 0),
-        bottomLeft: Radius.circular(bL ?? 0),
+      borderRadius: const BorderRadius.only(
+        bottomRight: Radius.circular(35),
+        topRight: Radius.circular(15),
+        bottomLeft: Radius.circular(15),
       ),
+      border: Border.all(color: AppColors.black, width: .5),
+    );
+  }
+
+  static showAndEditItemCard({int? color}) {
+    return BoxDecoration(color: Color(color ?? 0x00000000));
+  }
+
+  static settingsCard() {
+    return BoxDecoration(
+      color: AppColors.grey.withOpacity(.2),
+      borderRadius: BorderRadius.circular(10),
+    );
+  }
+
+  static itemCard({int? color, int? borderColor}) {
+    return BoxDecoration(
+      color: Color(color ?? 0x00000000),
+      borderRadius: BorderRadius.circular(7),
       border: Border.all(
-          color: Color(borderColor ?? color ?? 0xFF000000),
-          width: borderWidth ?? 0.5),
+        color: Color(borderColor ?? color ?? 0xFF000000),
+        width: 2,
+      ),
+    );
+  }
+
+  static textAndTitleCard({int? color, int? borderColor}) {
+    return BoxDecoration(
+      color: AppColors.brownLight,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: AppColors.black, width: .5),
+    );
+  }
+
+  static noteNumCard() {
+    return BoxDecoration(
+      color: AppColors.white,
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+      ),
+      border: Border.all(color: AppColors.black, width: 2),
+    );
+  }
+
+  static favoriteNumCard() {
+    return BoxDecoration(
+      color: AppColors.white,
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+      ),
+      border: Border.all(color: AppColors.red, width: 2),
+    );
+  }
+
+  static defaultCard() {
+    return BoxDecoration(
+      color: AppColors.blueGrey,
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(10),
+        bottomRight: Radius.circular(10),
+      ),
     );
   }
 
   static catalogForItemCard() {
-    return const BoxDecoration(boxShadow: [
-      BoxShadow(
-        color: Color.fromARGB(255, 202, 202, 202),
-        spreadRadius: .5,
-        blurRadius: 5,
-        offset: Offset(0, 5),
-      ),
-      BoxShadow(
-        color: Colors.white,
-        offset: Offset(-5, 0),
-      ),
-    ], borderRadius: BorderRadius.only(bottomRight: Radius.circular(15)));
+    return const BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Color.fromARGB(255, 202, 202, 202),
+          spreadRadius: .5,
+          blurRadius: 5,
+          offset: Offset(-10, 0),
+        ),
+        BoxShadow(
+          color: Colors.white,
+          offset: Offset(-5, 0),
+        ),
+      ],
+    );
   }
 
   static shapeBorder() {
     return const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)));
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    );
   }
 
   static buttonStyle() {
     return ElevatedButton.styleFrom(primary: AppColors.blueGrey, elevation: 20);
-  }
-
-  static toolbarOptions() {
-    return const ToolbarOptions(
-      paste: true,
-      copy: true,
-      cut: true,
-      selectAll: true,
-    );
   }
 
   static fStyle({double? fSize, int? color, int? bold}) {

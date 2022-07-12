@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/app_size.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 
-import '../../../constant/app_color.dart';
+import '../../../../constant/app_size.dart';
 
 class TitleForm extends NoteStatelessWidget {
   TitleForm({
@@ -17,23 +16,16 @@ class TitleForm extends NoteStatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String title = note.fmt(context, 'note.title');
     return Container(
       height: 50,
       width: size(context).width * .9,
-      decoration: ViewUtils.kDecor(
-          color: AppColors.brownLight.value,
-          borderColor: AppColors.black.value,
-          tR: 10,
-          tL: 10,
-          bL: 10,
-          bR: 10),
+      decoration: ViewUtils.textAndTitleCard(),
       padding: const EdgeInsets.only(left: 7, top: 0),
       margin: const EdgeInsets.only(top: 30),
       child: TextFormField(
         controller: titleNoteController,
-        decoration: ViewUtils.nonBorderDecoration(
-            hint: note.fmt(context, 'note.title')),
-        toolbarOptions: ViewUtils.toolbarOptions(),
+        decoration: ViewUtils.nonBorderDecoration(hint: title),
         autofocus: true,
         focusNode: focusNode,
       ),

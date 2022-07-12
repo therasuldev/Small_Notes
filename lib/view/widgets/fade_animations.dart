@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
+import 'package:smallnotes/view/widgets/widgets.dart';
 
 enum AnimationType { opacity, translateY }
 
-class FadeAnimation extends StatelessWidget {
+class FadeAnimation extends NoteStatelessWidget {
   final double delay;
   final Widget child;
 
-  const FadeAnimation({required this.delay, required this.child, Key? key})
+   FadeAnimation({required this.delay, required this.child, Key? key})
       : super(key: key);
 
   @override

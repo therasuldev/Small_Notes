@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/app_color.dart';
 import 'package:smallnotes/view/general/home/home.dart';
 import 'package:smallnotes/view/general/profile/profile.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
+
+import '../constant/app_color.dart';
 
 class GeneralHome extends NoteStatefulWidget {
   GeneralHome({Key? key}) : super(key: key);

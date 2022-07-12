@@ -7,9 +7,11 @@ import 'package:smallnotes/core/database/notes_database.dart';
 import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
 import 'package:smallnotes/core/provider/lang_bloc/lang_cubit.dart';
 import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
-import 'package:smallnotes/view/constant/app_color.dart';
-import 'package:smallnotes/view/constant/app_route.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
+
+import 'constant/app_color.dart';
+import 'constant/app_route.dart';
+import 'core/provider/isGrid_view/grid_cubit.dart';
 
 class MyApp extends NoteStatefulWidget {
   MyApp({Key? key}) : super(key: key);
@@ -19,7 +21,7 @@ class MyApp extends NoteStatefulWidget {
 }
 
 class _MyAppState extends NoteState<MyApp> {
-  AppRoute appRoute = AppRoute();
+  final AppRoute appRoute = AppRoute();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -27,12 +29,17 @@ class _MyAppState extends NoteState<MyApp> {
         BlocProvider(create: (context) => NotesBloc(dbnHelper: DBNHelper())),
         BlocProvider(create: (context) => FavoriteBloc(dbfHelper: DBFHelper())),
         BlocProvider(create: (context) => LangCubit()..initApp()),
+        BlocProvider(create: (context) => GridCubit()..initApp()),
       ],
       child: BlocBuilder<LangCubit, LangState>(
         builder: (context, state) {
           return MaterialApp(
             theme: ThemeData(
-              appBarTheme: AppBarTheme(backgroundColor: AppColors.brown),
+              appBarTheme: AppBarTheme(
+                elevation: 0.5,
+                backgroundColor: AppColors.brownLight,
+                iconTheme: IconThemeData(color: AppColors.brown),
+              ),
               scaffoldBackgroundColor: AppColors.white,
             ),
             debugShowCheckedModeBanner: false,

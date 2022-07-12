@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smallnotes/core/database/favorite_notes_database.dart';
 
+import '../../model/note_model.dart';
+
 part 'favorite_event.dart';
 part 'favorite_state.dart';
 
@@ -18,19 +20,19 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       AddToFavoritesEvent event, Emitter<FavoriteState> emit) async {
     try {
       emit(FavoriteLoading());
-      final result = await dbfHelper.addToFavorites(event.id, event.value);
-      emit(FavoriteSuccess(item: result));
+      final model = await dbfHelper.addToFavorites(event.key,event.model);
+      emit(FavoriteSuccess(model: model));
     } catch (message) {
       emit(FavoriteError(message: message.toString()));
     }
   }
 
   void _onGetFavoritesEvent(
-      GetFavoritesEvent event, Emitter<FavoriteState> emit) async {
+      GetFavoritesEvent event, Emitter<FavoriteState> emit) {
     try {
       emit(FavoriteLoading());
-      final result = await dbfHelper.getFavorites();
-      emit(FavoriteSuccess(keys: result[0], values: result[1]));
+      final model = dbfHelper.getFavorites();
+      emit(FavoriteSuccess(model: model));
     } catch (message) {
       emit(FavoriteError(message: message.toString()));
     }
@@ -40,8 +42,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       UpdateFavoriteEvent event, Emitter<FavoriteState> emit) async {
     try {
       emit(FavoriteLoading());
-      final result = await dbfHelper.updateFavoriteNote(event.id, event.value);
-      emit(FavoriteSuccess(values: result[1]));
+      final model = await dbfHelper.updateFavoriteNote(event.key, event.model);
+      emit(FavoriteSuccess(model: model));
     } catch (message) {
       emit(FavoriteError(message: message.toString()));
     }
@@ -51,8 +53,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       RemoveFavoriteEvent event, Emitter<FavoriteState> emit) async {
     try {
       emit(FavoriteLoading());
-      final result = await dbfHelper.removeFavorite(event.id);
-      emit(FavoriteSuccess(keys: result[0], values: result[1]));
+      final model = await dbfHelper.removeFavorite(event.key);
+      emit(FavoriteSuccess(model: model));
     } catch (message) {
       emit(FavoriteError(message: message.toString()));
     }

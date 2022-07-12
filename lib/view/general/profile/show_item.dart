@@ -7,16 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:smallnotes/core/model/note_model.dart';
 import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
 import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
-import 'package:smallnotes/view/constant/app_color.dart';
-import 'package:smallnotes/view/constant/app_route.dart';
+import 'package:smallnotes/core/service/favorite_service.dart';
+import 'package:smallnotes/core/service/note_service.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 
-import '../../constant/app_size.dart';
+import '../../../constant/app_color.dart';
+import '../../../constant/app_route.dart';
+import '../../../constant/app_size.dart';
 import '../../widgets/widgets.dart';
 
-// ignore: must_be_immutable
 class ShowItem extends NoteStatefulWidget {
   ShowItem({
     this.isPage,
@@ -28,10 +30,10 @@ class ShowItem extends NoteStatefulWidget {
     this.getTextColor,
     Key? key,
   }) : super(key: key);
-  final String? id;
+  final dynamic id;
   final bool? isPage;
-  String? getTitleNote;
-  String? getTextNote;
+  final String? getTitleNote;
+  final String? getTextNote;
   final String? getDateCreate;
   final int? getBackgroundColor;
   final int? getTextColor;
@@ -46,8 +48,10 @@ class _ShowItemState extends NoteState<ShowItem> {
   final textController = TextEditingController();
   final GlobalKey key = GlobalKey();
 
-  Color iconColor = AppColors.black;
+  Color iconColor = AppColors.darkYellow;
   bool editItem = false;
+  bool _isFavorite = false;
+  bool _onTap = false;
   double fontSize = 15;
   dynamic _value;
   String newTitleNote = '';
@@ -57,33 +61,57 @@ class _ShowItemState extends NoteState<ShowItem> {
   void initState() {
     BlocProvider.of<NotesBloc>(context).add(GetNoteEvent());
     BlocProvider.of<FavoriteBloc>(context).add(GetFavoritesEvent());
+    isFavorite();
     super.initState();
   }
 
   void addToFavorite() async {
-    final values = ({
-      'titleNote': widget.getTitleNote,
-      'textNote': widget.getTextNote,
-      'dateCreate': widget.getDateCreate,
-      'backgroundColor': widget.getBackgroundColor,
-      'textColor': widget.getTextColor,
-    });
-    context.read<FavoriteBloc>().add(AddToFavoritesEvent(widget.id, values));
+    final model = NoteModel(
+      titleNote: widget.getTitleNote!,
+      textNote: widget.getTextNote!,
+      dateCreate: widget.getDateCreate!,
+      backgroundColor: widget.getBackgroundColor!,
+      textColor: widget.getTextColor!,
+    );
+    setState(() => _onTap = true);
+    context
+        .read<FavoriteBloc>()
+        .add(AddToFavoritesEvent(key: widget.id, model: model));
+  }
+
+  bool isFavorite() {
+    var nList = NoteService.noteService.keys.toList();
+    var fList = FavoriteService.favoriteService.keys.toList();
+    for (var nNote in nList) {
+      for (var fNote in fList) {
+        if (nNote == fNote && fNote == widget.id) {
+          setState(() => _isFavorite = true);
+        }
+      }
+    }
+    return _isFavorite;
   }
 
   void editNote() => setState(() => editItem = !editItem);
+
   void editedNote() async {
-    final values = ({
-      'textNote': newTextNote == '' ? widget.getTextNote : newTextNote,
-      'titleNote': newTitleNote == '' ? widget.getTitleNote : newTitleNote,
-      'dateCreate': DateFormat('yyyy.MM.dd').format(DateTime.now()),
-      'backgroundColor': widget.getBackgroundColor!,
-      'textColor': widget.getTextColor!,
-    });
+    final model = NoteModel(
+      titleNote: newTitleNote == '' ? widget.getTitleNote! : newTitleNote,
+      textNote: newTextNote == '' ? widget.getTextNote! : newTextNote,
+      dateCreate: DateFormat('yyyy.MM.dd').format(DateTime.now()),
+      backgroundColor: widget.getBackgroundColor!,
+      textColor: widget.getTextColor!,
+    );
 
     context
         .read<NotesBloc>()
-        .add(UpdateNoteEvent(id: widget.id!, values: values));
+        .add(UpdateNoteEvent(key: widget.id, model: model));
+
+    _isFavorite
+        ? context
+            .read<FavoriteBloc>()
+            .add(UpdateFavoriteEvent(key: widget.id, model: model))
+        : null;
     setState(() => editItem = false);
     Navigator.pop(context);
   }
@@ -117,11 +145,11 @@ class _ShowItemState extends NoteState<ShowItem> {
   }
 
   void removeItemFromDB(context) async {
-    final noteProvider = BlocProvider.of<NotesBloc>(context);
-    final favoriteProvider = BlocProvider.of<FavoriteBloc>(context);
+    final nProvider = BlocProvider.of<NotesBloc>(context);
+    final fProvider = BlocProvider.of<FavoriteBloc>(context);
 
-    noteProvider.add(RemoveNoteEvent(id: widget.id));
-    favoriteProvider.add(RemoveFavoriteEvent(id: widget.id));
+    nProvider.add(RemoveNoteEvent(key: widget.id));
+    fProvider.add(RemoveFavoriteEvent(key: widget.id));
     await Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => AppRoute.generalHome),
@@ -149,75 +177,7 @@ class _ShowItemState extends NoteState<ShowItem> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: size(context).width * .75,
-                    height: 50,
-                    decoration: ViewUtils.catalogForItemCard(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.favorite, color: iconColor),
-                          onPressed: widget.isPage! ? addToFavorite : null,
-                        ),
-                        IconButton(
-                          icon: editItem
-                              ? Icon(Icons.check, color: AppColors.green)
-                              : Icon(Icons.edit, color: AppColors.black),
-                          onPressed: () {
-                            !editItem ? editNote() : editedNote();
-                          },
-                        ),
-                        IconButton(
-                            onPressed: () => takeScreenshot(context),
-                            icon: const Icon(Icons.screenshot_sharp)),
-                        IconButton(
-                            onPressed: () => onShareWithResult(),
-                            icon: const Icon(Icons.share)),
-                        IconButton(
-                            onPressed: () => removeItem(),
-                            icon: Icon(Icons.delete, color: AppColors.red)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  DropdownButton(
-                    items: [
-                      DropdownMenuItem(
-                        value: 1,
-                        alignment: Alignment.center,
-                        onTap: () => setState(() => fontSize = 18),
-                        child: const Text("18"),
-                      ),
-                      DropdownMenuItem(
-                        value: 2,
-                        alignment: Alignment.center,
-                        child: const Text("20"),
-                        onTap: () => setState(() => fontSize = 20),
-                      ),
-                      DropdownMenuItem(
-                        value: 3,
-                        alignment: Alignment.center,
-                        child: const Text("22"),
-                        onTap: () => setState(() => fontSize = 22),
-                      ),
-                      DropdownMenuItem(
-                        value: 4,
-                        alignment: Alignment.center,
-                        child: const Text("24"),
-                        onTap: () => setState(() => fontSize = 24),
-                      )
-                    ],
-                    onChanged: (value) {
-                      setState(() => _value = value);
-                    },
-                    hint: Text(note.fmt(context, 'select.font.size')),
-                    value: _value,
-                  ),
-                ],
-              ),
+              _functionsForNote(context),
               const SizedBox(height: 10),
               editItem
                   ? _editItemContainer(context)
@@ -229,6 +189,84 @@ class _ShowItemState extends NoteState<ShowItem> {
     );
   }
 
+  Widget _functionsForNote(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: size(context).width,
+          height: 50,
+          decoration: ViewUtils.catalogForItemCard(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: (_onTap || _isFavorite)
+                    ? Icon(Icons.star, color: iconColor)
+                    : Icon(Icons.star_border, color: iconColor),
+                onPressed: () => widget.isPage! ? addToFavorite() : null,
+              ),
+              IconButton(
+                icon: editItem
+                    ? Icon(Icons.check, color: AppColors.green)
+                    : Icon(Icons.edit_note, color: AppColors.black),
+                onPressed: () => !editItem ? editNote() : editedNote(),
+              ),
+              IconButton(
+                icon: const Icon(Icons.screenshot_monitor),
+                onPressed: () => takeScreenshot(context),
+              ),
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () => onShareWithResult(),
+              ),
+              IconButton(
+                icon: Icon(Icons.delete_forever, color: AppColors.red),
+                onPressed: () => removeItem(),
+              ),
+              _dropDownButton(context),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _dropDownButton(BuildContext context) {
+    return DropdownButton(
+      items: [
+        DropdownMenuItem(
+          value: 1,
+          alignment: Alignment.center,
+          onTap: () => setState(() => fontSize = 18),
+          child: const Text("18"),
+        ),
+        DropdownMenuItem(
+          value: 2,
+          alignment: Alignment.center,
+          child: const Text("20"),
+          onTap: () => setState(() => fontSize = 20),
+        ),
+        DropdownMenuItem(
+          value: 3,
+          alignment: Alignment.center,
+          child: const Text("22"),
+          onTap: () => setState(() => fontSize = 22),
+        ),
+        DropdownMenuItem(
+          value: 4,
+          alignment: Alignment.center,
+          child: const Text("24"),
+          onTap: () => setState(() => fontSize = 24),
+        )
+      ],
+      onChanged: (value) {
+        setState(() => _value = value);
+      },
+      hint: const Text('15'),
+      value: _value,
+    );
+  }
+
   Widget _editItemContainer(BuildContext context) {
     return RepaintBoundary(
       key: key,
@@ -236,7 +274,8 @@ class _ShowItemState extends NoteState<ShowItem> {
         height: size(context).height - 60,
         width: size(context).width,
         padding: const EdgeInsets.all(5),
-        decoration: ViewUtils.kDecor(color: widget.getBackgroundColor!),
+        decoration:
+            ViewUtils.showAndEditItemCard(color: widget.getBackgroundColor),
         child: SingleChildScrollView(
           controller: scrollController,
           child: Column(
@@ -246,9 +285,9 @@ class _ShowItemState extends NoteState<ShowItem> {
                 scrollPadding: const EdgeInsets.all(0),
                 enabled: true,
                 maxLines: 2,
-                decoration: ViewUtils.nonBorderDecoration(),
+                decoration: ViewUtils.underlineBorderDecoration(),
                 style: ViewUtils.fStyle(
-                    fSize: fontSize, color: widget.getTextColor!),
+                    fSize: fontSize, color: widget.getTextColor),
                 onChanged: (String newTitle) => setState(() {
                   newTitleNote = newTitle;
                 }),
@@ -259,9 +298,9 @@ class _ShowItemState extends NoteState<ShowItem> {
                 enabled: true,
                 maxLines: 100,
                 maxLength: 1000,
-                decoration: ViewUtils.nonBorderDecoration(),
+                decoration: ViewUtils.underlineBorderDecoration(),
                 style: ViewUtils.fStyle(
-                    fSize: fontSize, color: widget.getTextColor!),
+                    fSize: fontSize, color: widget.getTextColor),
                 onChanged: (String newText) => setState(() {
                   newTextNote = newText;
                 }),
@@ -280,7 +319,8 @@ class _ShowItemState extends NoteState<ShowItem> {
         height: size(context).height - 60,
         width: size(context).width,
         padding: const EdgeInsets.all(5),
-        decoration: ViewUtils.kDecor(color: widget.getBackgroundColor!),
+        decoration:
+            ViewUtils.showAndEditItemCard(color: widget.getBackgroundColor),
         child: SingleChildScrollView(
           controller: scrollController,
           child: Column(

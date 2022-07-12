@@ -4,35 +4,33 @@ part of 'note_bloc.dart';
 abstract class NoteEvent extends Equatable {}
 
 class AddNoteEvent extends NoteEvent {
-  final dynamic id;
-  final Map<dynamic, dynamic> values;
+  final dynamic key;
+  final NoteModel model;
 
-  AddNoteEvent({required this.id, required this.values});
+  AddNoteEvent({required this.model, required this.key});
 
   @override
-  List<Object?> get props => [id, values];
+  List<Object?> get props => [key,model];
 }
 
 class GetNoteEvent extends NoteEvent {
-  final dynamic id;
-  GetNoteEvent({this.id});
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [];
 }
 
 class RemoveNoteEvent extends NoteEvent {
-  final dynamic id;
+  final dynamic key;
 
-  RemoveNoteEvent({required this.id});
+  RemoveNoteEvent({required this.key});
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [key];
 }
 
 class UpdateNoteEvent extends NoteEvent {
-  final String id;
-  final Map<String, dynamic> values;
+  final dynamic key;
+  final NoteModel model;
 
-  UpdateNoteEvent({required this.id, required this.values});
+  UpdateNoteEvent({required this.key, required this.model});
   @override
-  List<Object?> get props => [id, values];
+  List<Object?> get props => [key, model];
 }

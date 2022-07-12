@@ -1,13 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/app_route.dart';
+import 'package:smallnotes/view/general/components/favorite.dart';
 import 'package:smallnotes/view/widgets/header.dart';
 import 'package:smallnotes/view/widgets/settings.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../constant/app_color.dart';
+import '../../constant/animation_route/bottom_to_top.dart';
+import '../../constant/app_color.dart';
 import 'widgets.dart';
 
 class NoteDrawer extends NoteStatefulWidget {
@@ -19,11 +20,10 @@ class NoteDrawer extends NoteStatefulWidget {
 
 class _NoteDrawerState extends NoteState<NoteDrawer> {
   final Uri _urlTG = Uri.parse('https://t.me/+FdwYxaL9vos2NmYy');
-
-  final route = AppRoute();
+  final Uri _urlINSTA = Uri.parse('https://www.instagram.com/flutter.uiux/');
 
   _favoriteNotes(BuildContext context) {
-    Navigator.pushNamed(context, route.appRoutes.keys.elementAt(1));
+    bTtRoute(context: context, route: FavoritePG(), back: true);
   }
 
   _shareNoteApp() {}
@@ -46,7 +46,9 @@ class _NoteDrawerState extends NoteState<NoteDrawer> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(appPres, style: ViewUtils.fStyle(color: AppColors.black.value,bold: 5,fSize: 16)),
+                  Text(appPres,
+                      style: ViewUtils.fStyle(
+                          color: AppColors.black.value, bold: 5, fSize: 16)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -71,51 +73,53 @@ class _NoteDrawerState extends NoteState<NoteDrawer> {
   }
 
   void _launchInstagram() async {
-    if (!await launchUrl(_urlTG,
+    if (!await launchUrl(_urlINSTA,
         mode: LaunchMode.externalNonBrowserApplication)) {
-      throw 'Could not launch $_urlTG';
+      throw 'Could not launch $_urlINSTA';
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: Column(
-      children: [
-        SizedBox(height: MediaQuery.of(context).padding.top),
-        CircleAvatar(
-            minRadius: 50,
-            backgroundColor: AppColors.brown200,
-            child: const FlutterLogo(size: 50)),
-        const Padding(padding: EdgeInsets.only(top: 40)),
-        ListTile(
-          title: Text(note.fmt(context, 'drawer.1')),
-          leading: Icon(Icons.favorite, color: AppColors.red),
-          onTap: () => _favoriteNotes(context),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: MediaQuery.of(context).padding.top),
+          Container(
+            height: 90,
+            width: 90,
+            alignment: Alignment.center,
+            child: Image.asset('assets/img/notes.png'),
         ),
-        ListTile(
-          title: Text(note.fmt(context, 'drawer.2')),
-          leading: Icon(Icons.share, color: AppColors.grey),
-          onTap: () => _shareNoteApp(),
-        ),
-        ListTile(
-          title: Text(note.fmt(context, 'drawer.3')),
-          leading: Icon(Icons.star, color: AppColors.yellow),
-          onTap: () => _rateNoteApp(),
-        ),
-        ListTile(
-          title: Text(note.fmt(context, 'drawer.4')),
-          leading: Icon(Icons.settings, color: AppColors.grey),
-          onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (_) => Settings())),
-        ),
-        ListTile(
-          title: Text(note.fmt(context, 'drawer.5')),
-          leading: Icon(Icons.info, color: AppColors.grey),
-          onTap: () => _noteAppInformation(context),
-        ),
-      ],
-    ));
+          const Padding(padding: EdgeInsets.only(top: 40)),
+          ListTile(
+            title: Text(note.fmt(context, 'drawer.1')),
+            leading: Icon(Icons.favorite, color: AppColors.red),
+            onTap: () => _favoriteNotes(context),
+          ),
+          ListTile(
+            title: Text(note.fmt(context, 'drawer.2')),
+            leading: Icon(Icons.share, color: AppColors.grey),
+            onTap: () => _shareNoteApp(),
+          ),
+          ListTile(
+            title: Text(note.fmt(context, 'drawer.3')),
+            leading: Icon(Icons.star, color: AppColors.yellow),
+            onTap: () => _rateNoteApp(),
+          ),
+          ListTile(
+              title: Text(note.fmt(context, 'drawer.4')),
+              leading: Icon(Icons.settings, color: AppColors.grey),
+              onTap: () =>
+                  bTtRoute(context: context, route: Settings(), back: true)),
+          ListTile(
+            title: Text(note.fmt(context, 'drawer.5')),
+            leading: Icon(Icons.info, color: AppColors.grey),
+            onTap: () => _noteAppInformation(context),
+          ),
+        ],
+      ),
+    );
   }
 }

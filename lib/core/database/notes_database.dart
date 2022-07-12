@@ -1,42 +1,29 @@
+import 'dart:developer';
+
+import 'package:smallnotes/core/model/note_model.dart';
 import 'package:smallnotes/core/service/note_service.dart';
 
 class DBNHelper {
   final service = NoteService.noteService;
 
-  Future<dynamic> addNote(String id, Map<dynamic, dynamic> values) async {
-    return await service.put(id, values);
+  Future<List<NoteModel>> addNote(dynamic key, NoteModel model) async {
+    await service.put(key, model);
+    return getNotes();
   }
 
-  Future<List<dynamic>> getNotes() async {
-    var keys = service.keys.toList();
+  List<NoteModel> getNotes() {
     var values = service.values.toList();
-    List allNotes = [
-      [...keys],
-      [...values]
-    ];
-    return allNotes;
+    return values as List<NoteModel>;
   }
 
-  Future<List<dynamic>> removeNote(String key) async {
+  Future<List<NoteModel>> removeNote(dynamic key) async {
     await service.delete(key);
-    var keys = service.keys.toList();
-    var values = service.values.toList();
-    List remainingNotes = [
-      [...keys],
-      [...values]
-    ];
-    return remainingNotes;
+    return getNotes();
   }
 
-  Future<List<dynamic>> updateNote(
-      String id, Map<dynamic, dynamic> value) async {
-    await service.put(id, value);
-    var keys = service.keys.toList();
-    var values = service.values.toList();
-    List newNotes = [
-      [...keys],
-      [...values]
-    ];
-    return newNotes;
+  Future<List<NoteModel>> updateNote(dynamic key, NoteModel model) async {
+    await service.put(key, model);
+
+    return getNotes();
   }
 }

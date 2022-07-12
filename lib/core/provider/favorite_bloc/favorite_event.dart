@@ -4,12 +4,12 @@ part of 'favorite_bloc.dart';
 abstract class FavoriteEvent extends Equatable {}
 
 class AddToFavoritesEvent extends FavoriteEvent {
-  final dynamic id;
-  final dynamic value;
+  final dynamic key;
+  final NoteModel model;
 
-  AddToFavoritesEvent(this.id, this.value);
+  AddToFavoritesEvent({required this.key, required this.model});
   @override
-  List<Object?> get props => [id, value];
+  List<Object?> get props => [key ,model];
 }
 
 class GetFavoritesEvent extends FavoriteEvent {
@@ -18,18 +18,18 @@ class GetFavoritesEvent extends FavoriteEvent {
 }
 
 class UpdateFavoriteEvent extends FavoriteEvent {
-  final dynamic id;
-  final dynamic value;
+  final dynamic key;
+  final NoteModel model;
 
-  UpdateFavoriteEvent(this.id, this.value);
+  UpdateFavoriteEvent({required this.key, required this.model});
   @override
-  List<Object?> get props => [id, value];
+  List<Object?> get props => [key, model];
 }
 
 class RemoveFavoriteEvent extends FavoriteEvent {
-  final dynamic id;
+  final dynamic key;
 
-  RemoveFavoriteEvent({this.id});
+  RemoveFavoriteEvent({required this.key});
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [key];
 }

@@ -14,13 +14,11 @@ class FavoriteLoading extends FavoriteState {
 }
 
 class FavoriteSuccess extends FavoriteState {
-  final dynamic item;
-  final dynamic keys;
-  final dynamic values;
+  final List<NoteModel> model;
 
-  FavoriteSuccess({this.item, this.keys, this.values});
+  FavoriteSuccess({required this.model});
   @override
-  List<Object?> get props => [item, keys, values];
+  List<Object?> get props => [model];
 }
 
 class FavoriteError extends FavoriteState {

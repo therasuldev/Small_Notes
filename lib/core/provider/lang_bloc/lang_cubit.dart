@@ -16,8 +16,6 @@ class LangCubit extends Cubit<LangState> {
 
   Future<String?> get currentLang async {
     final appLang = await PrefService.preferences.get('lang');
-    log('yeni $appLang');
-
     return appLang ?? 'az';
   }
 
@@ -26,7 +24,7 @@ class LangCubit extends Cubit<LangState> {
       await PrefService.preferences.put('lang', newLang);
       emit(state.copyWith(langCode: newLang));
     } catch (e) {
-      emit(state.copyWith(error: e.toString()));
+      log(e.toString());
     }
   }
 }

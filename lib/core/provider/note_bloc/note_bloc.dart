@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smallnotes/core/database/notes_database.dart';
+import 'package:smallnotes/core/model/note_model.dart';
 
 part 'note_event.dart';
 part 'note_state.dart';
@@ -18,8 +19,8 @@ class NotesBloc extends Bloc<NoteEvent, NotesState> {
   void _onAddNoteEvent(AddNoteEvent event, Emitter<NotesState> emit) async {
     try {
       emit(Loading());
-      final result = await dbnHelper.addNote(event.id, event.values);
-      emit(Success(item: result));
+      final model = await dbnHelper.addNote(event.key,event.model);
+      emit(Success(model: model));
     } catch (message) {
       emit(Error(message: message.toString()));
     }
@@ -28,8 +29,8 @@ class NotesBloc extends Bloc<NoteEvent, NotesState> {
   void _onGetNoteEvent(GetNoteEvent event, Emitter<NotesState> emit) async {
     try {
       emit(Loading());
-      final result = await dbnHelper.getNotes();
-      emit(Success(keys: result[0], values: result[1]));
+      final model = dbnHelper.getNotes();
+      emit(Success(model: model));
     } catch (message) {
       emit(Error(message: message.toString()));
     }
@@ -39,8 +40,8 @@ class NotesBloc extends Bloc<NoteEvent, NotesState> {
       RemoveNoteEvent event, Emitter<NotesState> emit) async {
     try {
       emit(Loading());
-      final result = await dbnHelper.removeNote(event.id);
-      emit(Success(keys: result[0], values: result[1]));
+      final model = await dbnHelper.removeNote(event.key);
+      emit(Success(model: model));
     } catch (message) {
       emit(Error(message: message.toString()));
     }
@@ -50,8 +51,8 @@ class NotesBloc extends Bloc<NoteEvent, NotesState> {
       UpdateNoteEvent event, Emitter<NotesState> emit) async {
     try {
       emit(Loading());
-      final result = await dbnHelper.updateNote(event.id, event.values);
-      emit(Success(keys: result[0], values: result[1]));
+      final model = await dbnHelper.updateNote(event.key, event.model);
+      emit(Success(model: model));
     } catch (message) {
       emit(Error(message: message.toString()));
     }

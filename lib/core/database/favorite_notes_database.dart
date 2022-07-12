@@ -1,43 +1,27 @@
 import 'package:smallnotes/core/service/favorite_service.dart';
 
+import '../model/note_model.dart';
+
 class DBFHelper {
   final service = FavoriteService.favoriteService;
 
-  Future<dynamic> addToFavorites(
-      String id, Map<dynamic, dynamic> values) async {
-    return await service.put(id, values);
+  Future<List<NoteModel>> addToFavorites(dynamic key ,NoteModel model) async {
+    await service.put(key,model);
+    return getFavorites();
   }
 
-  Future<List<dynamic>> getFavorites() async {
-    var keys = service.keys.toList();
-    var values = service.values.toList();
-    List allFavoriteNotes = [
-      [...keys],
-      [...values]
-    ];
-    return allFavoriteNotes;
+  List<NoteModel> getFavorites() {
+    var model = service.values.toList();
+    return model as List<NoteModel>;
   }
 
-  Future<List<dynamic>> removeFavorite(String key) async {
+  Future<List<NoteModel>> removeFavorite(dynamic key) async {
     await service.delete(key);
-    var keys = service.keys.toList();
-    var values = service.values.toList();
-    List remainingNotes = [
-      [...keys],
-      [...values]
-    ];
-    return remainingNotes;
+    return getFavorites();
   }
 
-  Future<List<dynamic>> updateFavoriteNote(
-      String id, Map<dynamic, dynamic> value) async {
-    await service.put(id, value);
-    var keys = service.keys.toList();
-    var values = service.values.toList();
-    List newFavoriteNote = [
-      [...keys],
-      [...values]
-    ];
-    return newFavoriteNote;
+  Future<List<NoteModel>> updateFavoriteNote(dynamic key, NoteModel model) async {
+    await service.put(key, model);
+    return getFavorites();
   }
 }

@@ -1,10 +1,10 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/app_color.dart';
-import 'package:smallnotes/view/constant/app_size.dart';
+import 'package:smallnotes/constant/app_color.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 
+import '../../../../constant/app_size.dart';
 import '../../../widgets/widgets.dart';
 
 class TextForm extends NoteStatelessWidget {
@@ -25,13 +25,7 @@ class TextForm extends NoteStatelessWidget {
     return Container(
       height: size(context).height * .65,
       width: size(context).width * .9,
-      decoration: ViewUtils.kDecor(
-          color: AppColors.brownLight.value,
-          borderColor: AppColors.black.value,
-          tR: 10,
-          tL: 10,
-          bL: 10,
-          bR: 10),
+      decoration: ViewUtils.textAndTitleCard(),
       padding: const EdgeInsets.only(left: 7, top: 0),
       margin: const EdgeInsets.only(top: 20),
       child: Stack(
@@ -39,7 +33,6 @@ class TextForm extends NoteStatelessWidget {
           TextFormField(
             controller: textNoteController,
             decoration: ViewUtils.nonBorderDecoration(hint: hintText),
-            toolbarOptions: ViewUtils.toolbarOptions(),
             maxLines: 100,
             autofocus: true,
             onChanged: onChanged,
@@ -51,12 +44,9 @@ class TextForm extends NoteStatelessWidget {
               height: 20,
               width: 45,
               alignment: Alignment.center,
-              decoration: ViewUtils.kDecor(
-                  color: AppColors.blueGrey.value, bR: 10, tL: 10),
-              child: Text(
-                '$noteLength',
-                style: TextStyle(color: AppColors.white),
-              ),
+              decoration: ViewUtils.defaultCard(),
+              child:
+                  Text('$noteLength', style: TextStyle(color: AppColors.white)),
             ),
           )
         ],

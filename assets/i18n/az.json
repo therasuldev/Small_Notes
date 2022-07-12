@@ -1,4 +1,5 @@
-{
+{   "team": "R.R. TEAM",
+
     "app.title": "Qeyd dəftəri",
     "app.pres":"Small Colored Notes - 2022",
 
@@ -36,7 +37,14 @@
     "drawer.2":"Paylaş", 
     "drawer.3":"Bizi qiymətləndirin",
     "drawer.4":"Parametrlər",
-    "drawer.5":"Bizimlə əlaqə"
+    "drawer.5":"Bizimlə əlaqə",
+
+    "settings.grid": "Qeydlərin düzülüşü",
+    "settings.cache": "Keşi təmizləmək",
+    "settings.exit": "Çıxış",
+
+    "grid.view": "2x2",
+    "list": "siyahı"
 
 
 }

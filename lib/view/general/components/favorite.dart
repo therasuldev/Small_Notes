@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
+import 'package:smallnotes/core/service/favorite_service.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
 
+import '../../../constant/animation_route/bottom_to_top.dart';
+import '../../../constant/app_color.dart';
 import '../../../core/provider/note_bloc/note_bloc.dart';
-import '../../constant/app_color.dart';
 import '../profile/show_item.dart';
 
 class FavoritePG extends NoteStatefulWidget {
@@ -25,7 +29,7 @@ class _FavoritePGState extends NoteState<FavoritePG> {
 
   deleteFromFavorites({
     required FavoriteBloc fProvider,
-    required dynamic id,
+    required dynamic key,
   }) {
     return showDialog(
       context: context,
@@ -36,7 +40,7 @@ class _FavoritePGState extends NoteState<FavoritePG> {
           cancelTitle: note.fmt(context, 'dialog.close'),
           actTitle: note.fmt(context, 'dialog.check'),
           onAct: () {
-            fProvider.add(RemoveFavoriteEvent(id: id));
+            fProvider.add(RemoveFavoriteEvent(key: key));
             Navigator.pop(context);
           },
         );
@@ -44,102 +48,112 @@ class _FavoritePGState extends NoteState<FavoritePG> {
     );
   }
 
+  final String noData = 'assets/lottie/empty.json';
+  var service = FavoriteService.favoriteService;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.brownLight,
       body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
           final fProvider = BlocProvider.of<FavoriteBloc>(context);
           if (state is FavoriteSuccess) {
-            // return state.favoriteItem.isEmpty
-            //     ? Center(
-            //         child:
-            //             Lottie.asset('assets/lottie/empty.json', repeat: false))
-            return ListView.builder(
-              itemExtent: 200,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: state.keys?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                var item = state.values[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (_) => ShowItem(
-                                  isPage: false,
-                                  id: state.keys[index],
-                                  getTitleNote: item['titleNote'],
-                                  getTextNote: item['textNote'],
-                                  getDateCreate: item['dateCreate'],
-                                  getBackgroundColor: item['backgroundColor'],
-                                  getTextColor: item['textColor'],
-                                )),
-                        (route) => true);
-                  },
-                  child: Container(
-                    decoration: ViewUtils.kDecor(
-                        bR: 15,
-                        tL: 15,
-                        bL: 15,
-                        tR: 15,
-                        color: item['backgroundColor'],
-                        borderColor: AppColors.black.value),
-                    margin: const EdgeInsets.all(7),
-                    padding: const EdgeInsets.all(7),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.favorite),
-                              color: AppColors.red,
-                              iconSize: 30,
-                              onPressed: () => deleteFromFavorites(
-                                fProvider: fProvider,
-                                id: state.keys[index],
+            return state.model.isEmpty
+                ? Center(child: Lottie.asset(noData, repeat: false))
+                : ListView.builder(
+                    itemExtent: 200,
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: state.model.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final keys = service.keys.toList();
+                      var model = state.model[index];
+                      return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          columnCount: 1,
+                          duration: const Duration(milliseconds: 350),
+                          child: ScaleAnimation(
+                            child: GestureDetector(
+                              onTap: () {
+                                bTtRoute(
+                                    context: context,
+                                    route: ShowItem(
+                                      isPage: false,
+                                      id: keys[index],
+                                      getTitleNote: model.titleNote,
+                                      getTextNote: model.textNote,
+                                      getDateCreate: model.dateCreate,
+                                      getBackgroundColor: model.backgroundColor,
+                                      getTextColor: model.textColor,
+                                    ),
+                                    back: true);
+                              },
+                              child: Container(
+                                decoration: ViewUtils.favoriteCard(
+                                  color: model.backgroundColor,
+                                ),
+                                margin: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.star),
+                                          color: AppColors.darkYellow,
+                                          iconSize: 30,
+                                          onPressed: () => deleteFromFavorites(
+                                              fProvider: fProvider,
+                                              key: keys[index]),
+                                        ),
+                                        Expanded(child: Container()),
+                                        Text(
+                                          model.dateCreate,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(model.textColor),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Flexible(
+                                      child: Text(
+                                        model.titleNote,
+                                        maxLines: 1,
+                                        softWrap: true,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(model.textColor),
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        model.textNote,
+                                        maxLines: 6,
+                                        softWrap: true,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w300,
+                                          color: Color(model.textColor),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            Expanded(child: Container()),
-                            Text(item['dateCreate'],
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(item['textColor']))),
-                          ],
-                        ),
-                        const SizedBox(height: 3),
-                        Flexible(
-                          child: Text(
-                            item['titleNote'],
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w400,
-                                color: Color(item['textColor'])),
-                            maxLines: 1,
-                          ),
-                        ),
-                        Flexible(
-                          child: Text(
-                            item['textNote'],
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w300,
-                                color: Color(item['textColor'])),
-                            maxLines: 6,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
+                          ));
+                    },
+                  );
           }
           return const SizedBox.shrink();
         },

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/constant/app_color.dart';
+import 'package:smallnotes/view/general/components/favorite.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:smallnotes/view/widgets/widgets.dart';
+
+import '../../../../constant/app_color.dart';
+import '../../../../constant/animation_route/right_to_left_route.dart';
 
 class FavoriteNum extends NoteStatelessWidget {
   FavoriteNum({required this.numF, Key? key}) : super(key: key);
@@ -10,16 +13,11 @@ class FavoriteNum extends NoteStatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/favoritePG'),
+      onTap: () => rTlRoute(context: context, route: FavoritePG(), back: true),
       child: Container(
         height: 55,
         width: 66,
-        decoration: ViewUtils.kDecor(
-            color: AppColors.white.value,
-            borderColor: AppColors.red.value,
-            borderWidth: 2,
-            tL: 10,
-            tR: 10),
+        decoration: ViewUtils.favoriteNumCard(),
         alignment: Alignment.center,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
