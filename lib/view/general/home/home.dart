@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:smallnotes/constant/app_color.dart';
 import 'package:smallnotes/core/model/note_model.dart';
 import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
-import 'package:smallnotes/view/general/components/favorite.dart';
-import 'package:smallnotes/view/general/home/components/text_form_widget.dart';
-import 'package:smallnotes/view/general/home/components/title_form_widget.dart';
+import 'package:smallnotes/note.dart';
+import 'package:smallnotes/view/general/favorite_page/favorite.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../constant/animation_route/right_to_left_route.dart';
 import '../../widgets/drawer_components.dart';
+import 'text_form_field.dart/forms.dart';
 
 class Home extends NoteStatefulWidget {
   Home({Key? key}) : super(key: key);

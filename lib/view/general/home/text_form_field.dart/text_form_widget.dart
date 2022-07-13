@@ -1,11 +1,8 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:smallnotes/constant/app_color.dart';
+import 'package:smallnotes/note.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-
-import '../../../../constant/app_size.dart';
-import '../../../widgets/widgets.dart';
 
 class TextForm extends NoteStatelessWidget {
   TextForm({

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../../constant/app_color.dart';
+import 'package:smallnotes/note.dart';
 
 class ViewUtils {
   static underlineBorderDecoration({String? hint}) {

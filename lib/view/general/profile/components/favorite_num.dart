@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/general/components/favorite.dart';
+import 'package:smallnotes/note.dart';
+import 'package:smallnotes/view/general/favorite_page/favorite.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
-
-import '../../../../constant/app_color.dart';
-import '../../../../constant/animation_route/right_to_left_route.dart';
 
 class FavoriteNum extends NoteStatelessWidget {
   FavoriteNum({required this.numF, Key? key}) : super(key: key);

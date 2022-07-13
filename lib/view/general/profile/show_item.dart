@@ -12,12 +12,8 @@ import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
 import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
 import 'package:smallnotes/core/service/favorite_service.dart';
 import 'package:smallnotes/core/service/note_service.dart';
+import 'package:smallnotes/note.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-
-import '../../../constant/app_color.dart';
-import '../../../constant/app_route.dart';
-import '../../../constant/app_size.dart';
-import '../../widgets/widgets.dart';
 
 class ShowItem extends NoteStatefulWidget {
   ShowItem({

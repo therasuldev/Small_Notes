@@ -4,11 +4,9 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
 import 'package:smallnotes/core/service/favorite_service.dart';
+import 'package:smallnotes/note.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
 
-import '../../../constant/animation_route/bottom_to_top.dart';
-import '../../../constant/app_color.dart';
 import '../../../core/provider/note_bloc/note_bloc.dart';
 import '../profile/show_item.dart';
 

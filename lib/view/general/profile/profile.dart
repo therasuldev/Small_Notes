@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:lottie/lottie.dart';
-import 'package:smallnotes/constant/app_color.dart';
 import 'package:smallnotes/core/model/note_model.dart';
 import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
 import 'package:smallnotes/core/provider/isGrid_view/grid_cubit.dart';
 import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
 import 'package:smallnotes/core/service/favorite_service.dart';
 import 'package:smallnotes/core/service/note_service.dart';
-import 'package:smallnotes/view/general/profile/components/favorite_num.dart';
-import 'package:smallnotes/view/general/profile/components/note_num.dart';
+import 'package:smallnotes/note.dart';
 import 'package:smallnotes/view/general/profile/show_item.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
 
-import '../../../constant/animation_route/right_to_left_route.dart';
-import '../../../constant/app_size.dart';
+import 'components/number_of_notes.dart';
 
 class Profile extends NoteStatefulWidget {
   Profile({Key? key}) : super(key: key);

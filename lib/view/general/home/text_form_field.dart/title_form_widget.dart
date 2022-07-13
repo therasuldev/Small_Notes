@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smallnotes/note.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
-
-import '../../../../constant/app_size.dart';
 
 class TitleForm extends NoteStatelessWidget {
   TitleForm({

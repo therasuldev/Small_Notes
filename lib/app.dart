@@ -7,11 +7,9 @@ import 'package:smallnotes/core/database/notes_database.dart';
 import 'package:smallnotes/core/provider/favorite_bloc/favorite_bloc.dart';
 import 'package:smallnotes/core/provider/lang_bloc/lang_cubit.dart';
 import 'package:smallnotes/core/provider/note_bloc/note_bloc.dart';
-import 'package:smallnotes/view/widgets/widgets.dart';
 
-import 'constant/app_color.dart';
-import 'constant/app_route.dart';
 import 'core/provider/isGrid_view/grid_cubit.dart';
+import 'note.dart';
 
 class MyApp extends NoteStatefulWidget {
   MyApp({Key? key}) : super(key: key);

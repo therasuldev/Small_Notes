@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:smallnotes/core/model/note_model.dart';
 import 'package:smallnotes/core/service/note_service.dart';
 
@@ -13,7 +11,7 @@ class DBNHelper {
 
   List<NoteModel> getNotes() {
     var values = service.values.toList();
-    return values as List<NoteModel>;
+    return values;
   }
 
   Future<List<NoteModel>> removeNote(dynamic key) async {

@@ -44,6 +44,8 @@
     "settings.cache": "очистить кеш",
     "settings.exit": "Выход",
 
+    "info.title": "Все заметки, настройки будут удалены",
+
     "grid.view": "2x2",
     "list": "список"
 }

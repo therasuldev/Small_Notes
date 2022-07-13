@@ -1,15 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:smallnotes/view/general/components/favorite.dart';
+import 'package:smallnotes/note.dart';
+import 'package:smallnotes/view/general/favorite_page/favorite.dart';
 import 'package:smallnotes/view/widgets/header.dart';
 import 'package:smallnotes/view/widgets/settings.dart';
 import 'package:smallnotes/view/widgets/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../constant/animation_route/bottom_to_top.dart';
-import '../../constant/app_color.dart';
-import 'widgets.dart';
 
 class NoteDrawer extends NoteStatefulWidget {
   NoteDrawer({Key? key}) : super(key: key);
@@ -91,7 +88,7 @@ class _NoteDrawerState extends NoteState<NoteDrawer> {
             width: 90,
             alignment: Alignment.center,
             child: Image.asset('assets/img/notes.png'),
-        ),
+          ),
           const Padding(padding: EdgeInsets.only(top: 40)),
           ListTile(
             title: Text(note.fmt(context, 'drawer.1')),
